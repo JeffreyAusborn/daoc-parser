@@ -36,8 +36,9 @@ func main() {
 	w := a.NewWindow("Dark Age of Camelot - Chat Parser")
 	damageLabel := widget.NewLabel("")
 	createdBy := widget.NewLabel("Created by Theorist")
+	scrollContainer := container.NewVScroll(nil)
 
-	w.SetContent(container.NewVBox(
+	w.SetContent(container.NewVScroll(container.NewVBox(
 		damageLabel,
 		widget.NewButton("Refresh", func() {
 			e := os.Remove(FILE_NAME)
@@ -46,7 +47,8 @@ func main() {
 			}
 		}),
 		createdBy,
-	))
+		scrollContainer,
+	)))
 
 	go func() {
 		openLogFile(FILE_NAME)
