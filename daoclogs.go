@@ -1,6 +1,9 @@
 package main
 
-import "time"
+import (
+	"strings"
+	"time"
+)
 
 type DaocLogs struct {
 	User  Stats
@@ -90,7 +93,7 @@ func (_daocLogs *DaocLogs) findEnemyStats(user string) *Stats {
 		}
 	}
 	newUser := Stats{}
-	newUser.UserName = user
+	newUser.UserName = strings.ToLower(user)
 	_daocLogs.Enemy = append(_daocLogs.Enemy, &newUser)
 	return &newUser
 }
