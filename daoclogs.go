@@ -71,7 +71,7 @@ type Stats struct {
 */
 
 func (_daocLogs *DaocLogs) writeLogValues() string {
-	return _daocLogs.calculateArmorhits() + "\n" + _daocLogs.calculateDamageIn() + "\n" + _daocLogs.calculateEnemyDensives() + "\n" + _daocLogs.calculateDamageOut() + "\n" + _daocLogs.calculateHeal() + "\n" + _daocLogs.calculateDensives()
+	return _daocLogs.calculateArmorhits() + "\n" + _daocLogs.calculateDamageIn() + "\n" + _daocLogs.calculateEnemyDensives() + "\n" + _daocLogs.calculateDamageOut() + "\n" + _daocLogs.calculateHeal() + "\n" + _daocLogs.calculateDensives() + "\n" + _daocLogs.calculateTime()
 }
 
 func (_daocLogs *DaocLogs) getUser() *Stats {
