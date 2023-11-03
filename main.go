@@ -2,7 +2,6 @@ package main
 
 import (
 	"bufio"
-	"flag"
 	"fmt"
 	"log"
 	"os"
@@ -33,12 +32,6 @@ func readChatFile(r fyne.URIReadCloser, err error) {
 }
 
 func main() {
-	logPath := flag.String("file", "", "Path to chat.log")
-	streamLogs := flag.Bool("stream", false, "")
-	flag.Parse()
-	if *logPath == "" {
-		log.Fatal("Requied argument missing: --file path/to/chat.log")
-	}
 	daocLogs = DaocLogs{}
 	a := fa.New()
 	w := a.NewWindow("Dark Age of Camelot - Chat Parser - By: Theorist")
@@ -47,12 +40,14 @@ func main() {
 	w.SetContent(container.NewVBox(
 		damageLabel,
 		widget.NewButton("Load Chat Log", func() {
-			fd := dialog.NewFileOpen(func(fyne.URIReadCloser, error) {
+			fd := dialog.NewFileOpen(func(r fyne.URIReadCloser, err error) {
+				chatLogFile = r.URI().Name()
+				fmt.Println(r.URI().Name())
 			}, w)
 			fd.Show()
 		}),
 		widget.NewButton("Refresh", func() {
-			e := os.Remove(*logPath)
+			e := os.Remove(chatLogFile)
 			if e != nil {
 				log.Fatal(e)
 			}
@@ -60,14 +55,16 @@ func main() {
 	))
 
 	go func() {
-		openLogFile(*logPath)
+		if chatLogFile != "" {
+			openLogFile(chatLogFile)
+		}
 		damageLabel.SetText(daocLogs.writeLogValues())
-		if *streamLogs {
-			for range time.Tick(time.Second * LOG_STREAM_TIME) {
-				daocLogs = DaocLogs{}
-				openLogFile(*logPath)
-				damageLabel.SetText(daocLogs.writeLogValues())
+		for range time.Tick(time.Second * LOG_STREAM_TIME) {
+			daocLogs = DaocLogs{}
+			if chatLogFile != "" {
+				openLogFile(chatLogFile)
 			}
+			damageLabel.SetText(daocLogs.writeLogValues())
 		}
 	}()
 
