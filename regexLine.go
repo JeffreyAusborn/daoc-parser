@@ -203,21 +203,21 @@ func (_daocLogs *DaocLogs) regexEnemy(line string) {
 	match, _ := regexp.MatchString("parries your attack", line)
 	if match {
 		user := strings.Split(line, " parries")[0]
-		user = strings.Split(line, " ")[1]
+		user = strings.Split(user, " ")[1]
 		userStats := _daocLogs.findEnemyStats(user)
 		userStats.ParryTotal += 1
 	}
 	match, _ = regexp.MatchString("evades your attack", line)
 	if match {
 		user := strings.Split(line, " evades")[0]
-		user = strings.Split(line, " ")[1]
+		user = strings.Split(user, " ")[1]
 		userStats := _daocLogs.findEnemyStats(user)
 		userStats.EvadeTotal += 1
 	}
 	match, _ = regexp.MatchString("blocks your attack", line)
 	if match {
 		user := strings.Split(line, " blocks")[0]
-		user = strings.Split(line, " ")[1]
+		user = strings.Split(user, " ")[1]
 		userStats := _daocLogs.findEnemyStats(user)
 		userStats.BlockTotal += 1
 	}
@@ -231,7 +231,7 @@ func (_daocLogs *DaocLogs) regexEnemy(line string) {
 			damageInt, _ := strconv.Atoi(damage)
 
 			user := strings.Split(line, " hits you")[0]
-			user = strings.Split(line, "] ")[1]
+			user = strings.Split(user, "] ")[1]
 			userStats := _daocLogs.findEnemyStats(user)
 
 			userStats.MovingDamageTotal = append(userStats.MovingDamageTotal, damageInt)
@@ -247,7 +247,7 @@ func (_daocLogs *DaocLogs) regexEnemy(line string) {
 			damageInt, _ := strconv.Atoi(damage)
 
 			user := strings.Split(line, " hits your")[0]
-			user = strings.Split(line, "] ")[1]
+			user = strings.Split(user, "] ")[1]
 			userStats := _daocLogs.findEnemyStats(user)
 
 			userStats.MovingDamageTotal = append(userStats.MovingDamageTotal, damageInt)

@@ -16,26 +16,26 @@ func (_daocLogs *DaocLogs) calculateDamageOut() string {
 		siphons := ""
 		kills := ""
 		if len(_daocLogs.User.MovingDamageStyles)+len(_daocLogs.User.MovingDamageBaseMelee) > 0 {
-			meleeDamage = fmt.Sprintf("\tMelee Hit: %d\n\tMelee Damage: %d\n", len(_daocLogs.User.MovingDamageStyles)+len(_daocLogs.User.MovingDamageBaseMelee), sumArr(_daocLogs.User.MovingDamageStyles)+sumArr(_daocLogs.User.MovingDamageBaseMelee))
+			meleeDamage = fmt.Sprintf("Melee Hit: %d\nMelee Damage: %d\n", len(_daocLogs.User.MovingDamageStyles)+len(_daocLogs.User.MovingDamageBaseMelee), sumArr(_daocLogs.User.MovingDamageStyles)+sumArr(_daocLogs.User.MovingDamageBaseMelee))
 		}
 		if len(_daocLogs.User.MovingDamageSpells)+len(_daocLogs.User.MovingExtraDamage) > 0 {
-			spellDamage = fmt.Sprintf("\tSpell Hit: %d\n\tSpell Damage: %d\n", len(_daocLogs.User.MovingDamageSpells)+len(_daocLogs.User.MovingExtraDamage), sumArr(_daocLogs.User.MovingDamageSpells)+sumArr(_daocLogs.User.MovingExtraDamage))
+			spellDamage = fmt.Sprintf("Spell Hit: %d\nSpell Damage: %d\n", len(_daocLogs.User.MovingDamageSpells)+len(_daocLogs.User.MovingExtraDamage), sumArr(_daocLogs.User.MovingDamageSpells)+sumArr(_daocLogs.User.MovingExtraDamage))
 		}
 		if len(_daocLogs.User.MovingCritDamage) > 0 {
-			critDamage = fmt.Sprintf("\tCrit Hit: %d\n\tCrit Damage: %d\n", len(_daocLogs.User.MovingCritDamage), sumArr(_daocLogs.User.MovingCritDamage))
+			critDamage = fmt.Sprintf("Crit Hit: %d\nCrit Damage: %d\n", len(_daocLogs.User.MovingCritDamage), sumArr(_daocLogs.User.MovingCritDamage))
 		}
 
 		if _daocLogs.User.ResistsOutTotal > 0 {
-			spellsResists = fmt.Sprintf("\tResits: %d\n", _daocLogs.User.ResistsOutTotal)
+			spellsResists = fmt.Sprintf("Resits: %d\n", _daocLogs.User.ResistsOutTotal)
 		}
 		if _daocLogs.User.MissesTotal > 0 {
-			meleeMiss = fmt.Sprintf("\tMisses: %d\n", _daocLogs.User.MissesTotal)
+			meleeMiss = fmt.Sprintf("Misses: %d\n", _daocLogs.User.MissesTotal)
 		}
 		if _daocLogs.User.SiphonTotal > 0 {
-			siphons = fmt.Sprintf("\tSiphons: %d\n", _daocLogs.User.SiphonTotal)
+			siphons = fmt.Sprintf("Siphons: %d\n", _daocLogs.User.SiphonTotal)
 		}
 		if _daocLogs.User.TotalKills > 0 {
-			kills = fmt.Sprintf("\tKills: %d\n", _daocLogs.User.TotalKills)
+			kills = fmt.Sprintf("Kills: %d\n", _daocLogs.User.TotalKills)
 		}
 		return damageIn + meleeDamage + spellDamage + critDamage + spellsResists + meleeMiss + siphons + kills
 	}
@@ -60,13 +60,13 @@ func (_daocLogs *DaocLogs) calculateDamageIn() string {
 		meleeDamage := ""
 		spellDamage := ""
 		if totalDamageMelee > 0 {
-			meleeDamage = fmt.Sprintf("\tMelee Hit: %d\n\tMelee Damage: %d\n", len(totalMeleeDamage), totalDamageMelee)
+			meleeDamage = fmt.Sprintf("Melee Hit: %d\nMelee Damage: %d\n", len(totalMeleeDamage), totalDamageMelee)
 		}
 		if totalDamageSpell > 0 {
-			spellDamage = fmt.Sprintf("\tSpell Hit: %d\n\tSpell Damage: %d\n", len(totalAllDamage)-len(totalMeleeDamage), totalDamageSpell)
+			spellDamage = fmt.Sprintf("Spell Hit: %d\nSpell Damage: %d\n", len(totalAllDamage)-len(totalMeleeDamage), totalDamageSpell)
 		}
 		if _daocLogs.getUser().TotalDeaths > 0 {
-			spellDamage = fmt.Sprintf("\tDeaths: %d\n", daocLogs.getUser().TotalDeaths)
+			spellDamage = fmt.Sprintf("Deaths: %d\n", daocLogs.getUser().TotalDeaths)
 		}
 		return damageIn + meleeDamage + spellDamage
 	}
@@ -82,19 +82,19 @@ func (_daocLogs *DaocLogs) calculateHeal() string {
 		overHeal := ""
 		healCrits := ""
 		if len(_daocLogs.User.TotalSelfHeal) > 0 {
-			selfHeal = fmt.Sprintf("\tSelf Heals: %d\n", sumArr(_daocLogs.User.TotalSelfHeal))
+			selfHeal = fmt.Sprintf("Self Heals: %d\n", sumArr(_daocLogs.User.TotalSelfHeal))
 		}
 		if len(_daocLogs.User.TotalHeals) > 0 {
-			allHeal = fmt.Sprintf("\tAll Heals: %d\n", sumArr(_daocLogs.User.TotalHeals))
+			allHeal = fmt.Sprintf("All Heals: %d\n", sumArr(_daocLogs.User.TotalHeals))
 		}
 		if len(_daocLogs.User.TotalHealsCrits) > 0 {
-			healCrits = fmt.Sprintf("\tHeal Crits: %d\n", sumArr(_daocLogs.User.TotalHealsCrits))
+			healCrits = fmt.Sprintf("Heal Crits: %d\n", sumArr(_daocLogs.User.TotalHealsCrits))
 		}
 		if len(_daocLogs.User.TotalAbsorbed) > 0 {
-			selfAbsorb = fmt.Sprintf("\tAbsorbed: %d\n", sumArr(_daocLogs.User.TotalAbsorbed))
+			selfAbsorb = fmt.Sprintf("Absorbed: %d\n", sumArr(_daocLogs.User.TotalAbsorbed))
 		}
 		if _daocLogs.User.OverHeals > 0 {
-			overHeal = fmt.Sprintf("\tOverHeal Count: %d\n", _daocLogs.User.OverHeals)
+			overHeal = fmt.Sprintf("OverHeal Count: %d\n", _daocLogs.User.OverHeals)
 		}
 		return healAndAbsorb + selfHeal + allHeal + healCrits + overHeal + selfAbsorb
 	}
@@ -110,19 +110,19 @@ func (_daocLogs *DaocLogs) calculateDensives() string {
 		stuns := ""
 		resists := ""
 		if _daocLogs.User.BlockTotal > 0 {
-			block = fmt.Sprintf("\tBlock: %d\n", _daocLogs.User.BlockTotal)
+			block = fmt.Sprintf("Block: %d\n", _daocLogs.User.BlockTotal)
 		}
 		if _daocLogs.User.ParryTotal > 0 {
-			parry = fmt.Sprintf("\tParry: %d\n", _daocLogs.User.ParryTotal)
+			parry = fmt.Sprintf("Parry: %d\n", _daocLogs.User.ParryTotal)
 		}
 		if _daocLogs.User.EvadeTotal > 0 {
-			evade = fmt.Sprintf("\tEvade: %d\n", _daocLogs.User.EvadeTotal)
+			evade = fmt.Sprintf("Evade: %d\n", _daocLogs.User.EvadeTotal)
 		}
 		if _daocLogs.User.TotalStuns > 0 {
-			stuns = fmt.Sprintf("\tStuns: %d\n", _daocLogs.User.TotalStuns)
+			stuns = fmt.Sprintf("Stuns: %d\n", _daocLogs.User.TotalStuns)
 		}
 		if _daocLogs.User.TotalStuns > 0 {
-			resists = fmt.Sprintf("\tResists: %d\n", _daocLogs.User.ResistsInTotal)
+			resists = fmt.Sprintf("Resists: %d\n", _daocLogs.User.ResistsInTotal)
 		}
 		return defensives + block + parry + evade + stuns + resists
 	}
@@ -145,13 +145,13 @@ func (_daocLogs *DaocLogs) calculateEnemyDensives() string {
 		parry := ""
 		evade := ""
 		if blocks > 0 {
-			block = fmt.Sprintf("\tBlock: %d\n", blocks)
+			block = fmt.Sprintf("Block: %d\n", blocks)
 		}
 		if parries > 0 {
-			parry = fmt.Sprintf("\tParry: %d\n", parries)
+			parry = fmt.Sprintf("Parry: %d\n", parries)
 		}
 		if evades > 0 {
-			evade = fmt.Sprintf("\tEvade: %d\n", evades)
+			evade = fmt.Sprintf("Evade: %d\n", evades)
 		}
 		return defensives + block + parry + evade
 	}
@@ -166,7 +166,7 @@ func (_daocLogs *DaocLogs) getCombativeUsers() string {
 
 	if len(users) > 0 {
 		combative := "----- Combatives -----\n"
-		combativeUsers := fmt.Sprintf("%s\n", strings.Join(dedupe(users), "\t\n"))
+		combativeUsers := fmt.Sprintf("%s\n", strings.Join(dedupe(users), "\n"))
 		return combative + combativeUsers
 	}
 	return ""
@@ -175,7 +175,7 @@ func (_daocLogs *DaocLogs) getCombativeUsers() string {
 func (_daocLogs *DaocLogs) calculateTime() string {
 	totalMinutes := int(_daocLogs.User.EndTime.Sub(_daocLogs.User.StartTime).Seconds()) / 60
 	totalSeconds := int(_daocLogs.User.EndTime.Sub(_daocLogs.User.StartTime).Seconds()) - (60 * totalMinutes)
-	return fmt.Sprintf("----- Total Time -----\n\t%d minutes and %d seconds\n", totalMinutes, totalSeconds)
+	return fmt.Sprintf("----- Total Time -----\n%d minutes and %d seconds\n", totalMinutes, totalSeconds)
 }
 
 func (_daocLogs *DaocLogs) calculateArmorhits() string {
@@ -202,22 +202,22 @@ func (_daocLogs *DaocLogs) calculateArmorhits() string {
 		footHitFmt := ""
 		ArmorHitFmt := "----- Armor Damaged -----\n"
 		if len(head) > 0 {
-			headHitFmt = fmt.Sprintf("\tHead Hit: %d\n\tHead Damage: %d\n", len(head), sumArr(head))
+			headHitFmt = fmt.Sprintf("Head Hit: %d\nHead Damage: %d\n", len(head), sumArr(head))
 		}
 		if len(torso) > 0 {
-			torsoHitFmt = fmt.Sprintf("\tTorso Hit: %d\n\tTorso Damage: %d\n", len(torso), sumArr(torso))
+			torsoHitFmt = fmt.Sprintf("Torso Hit: %d\nTorso Damage: %d\n", len(torso), sumArr(torso))
 		}
 		if len(arm) > 0 {
-			armHitFmt = fmt.Sprintf("\tArm Hit: %d\n\tArm Damage: %d\n", len(arm), sumArr(arm))
+			armHitFmt = fmt.Sprintf("Arm Hit: %d\nArm Damage: %d\n", len(arm), sumArr(arm))
 		}
 		if len(leg) > 0 {
-			legHitFmt = fmt.Sprintf("\tLeg Hit: %d\n\tLeg Damage: %d\n", len(leg), sumArr(leg))
+			legHitFmt = fmt.Sprintf("Leg Hit: %d\nLeg Damage: %d\n", len(leg), sumArr(leg))
 		}
 		if len(hand) > 0 {
-			handHitFmt = fmt.Sprintf("\tHand Hit: %d\n\tHand Damage: %d\n", len(hand), sumArr(hand))
+			handHitFmt = fmt.Sprintf("Hand Hit: %d\nHand Damage: %d\n", len(hand), sumArr(hand))
 		}
 		if len(foot) > 0 {
-			footHitFmt = fmt.Sprintf("\tFoot Hit: %d\n\tFoot Damage: %d\n", len(foot), sumArr(foot))
+			footHitFmt = fmt.Sprintf("Foot Hit: %d\nFoot Damage: %d\n", len(foot), sumArr(foot))
 		}
 
 		return ArmorHitFmt + headHitFmt + torsoHitFmt + armHitFmt + legHitFmt + handHitFmt + footHitFmt
