@@ -248,7 +248,7 @@ func (_daocLogs *DaocLogs) regexMisc(line string) {
 		expInt, _ := strconv.Atoi(exp)
 		_daocLogs.User.experienceGained = append(_daocLogs.User.experienceGained, expInt)
 	}
-	match, _ = regexp.MatchString("dies", line)
+	match, _ = regexp.MatchString("You just killed", line)
 	if match {
 		_daocLogs.User.totalKills += 1
 	}
@@ -361,6 +361,7 @@ func (_daocLogs *DaocLogs) calculateDamageOut() string {
 		spellsResists := ""
 		meleeMiss := ""
 		siphons := ""
+		kills := ""
 		if len(_daocLogs.User.movingDamageStyles)+len(_daocLogs.User.movingDamageBaseMelee) > 0 {
 			meleeDamage = fmt.Sprintf("\tMelee Hit: %d\n\tMelee Damage: %d\n", len(_daocLogs.User.movingDamageStyles)+len(_daocLogs.User.movingDamageBaseMelee), sumArr(_daocLogs.User.movingDamageStyles)+sumArr(_daocLogs.User.movingDamageBaseMelee))
 		}
@@ -368,7 +369,7 @@ func (_daocLogs *DaocLogs) calculateDamageOut() string {
 			spellDamage = fmt.Sprintf("\tSpell Hit: %d\n\tSpell Damage: %d\n", len(_daocLogs.User.movingDamageSpells)+len(_daocLogs.User.movingExtraDamage), sumArr(_daocLogs.User.movingDamageSpells)+sumArr(_daocLogs.User.movingExtraDamage))
 		}
 		if len(_daocLogs.User.movingCritDamage) > 0 {
-			spellDamage = fmt.Sprintf("\tCrit Hit: %d\n\tCrit Damage: %d\n", len(_daocLogs.User.movingCritDamage), sumArr(_daocLogs.User.movingCritDamage))
+			critDamage = fmt.Sprintf("\tCrit Hit: %d\n\tCrit Damage: %d\n", len(_daocLogs.User.movingCritDamage), sumArr(_daocLogs.User.movingCritDamage))
 		}
 
 		if _daocLogs.User.resistsTotal > 0 {
@@ -380,7 +381,10 @@ func (_daocLogs *DaocLogs) calculateDamageOut() string {
 		if _daocLogs.User.siphonTotal > 0 {
 			siphons = fmt.Sprintf("\tSiphons: %d\n", _daocLogs.User.siphonTotal)
 		}
-		return damageIn + meleeDamage + spellDamage + critDamage + spellsResists + meleeMiss + siphons
+		if _daocLogs.User.totalKills > 0 {
+			kills = fmt.Sprintf("\tKills: %d\n", _daocLogs.User.totalKills)
+		}
+		return damageIn + meleeDamage + spellDamage + critDamage + spellsResists + meleeMiss + siphons + kills
 	}
 	return ""
 }
