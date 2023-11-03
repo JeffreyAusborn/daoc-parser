@@ -6,8 +6,6 @@ import (
 	"strconv"
 	"strings"
 	"time"
-
-	"github.com/gosuri/uilive"
 )
 
 type DaocLogs struct {
@@ -208,7 +206,7 @@ func (_daocLogs *DaocLogs) regexTime(line string) {
 		if match {
 			timeObj, err := time.Parse("Mon Jan 02 15:04:05 2006", strings.TrimSuffix(strings.Split(line, ": ")[1], "\r\n"))
 			if err != nil {
-				fmt.Println("Error:", err)
+				fmt.Sprintln("Error:", err)
 				return
 			}
 			_daocLogs.User.startTime = timeObj
@@ -218,53 +216,16 @@ func (_daocLogs *DaocLogs) regexTime(line string) {
 	if match {
 		timeObj, err := time.Parse("Mon Jan 02 15:04:05 2006", strings.TrimSuffix(strings.Split(line, ": ")[1], "\r\n"))
 		if err != nil {
-			fmt.Println("Error:", err)
+			fmt.Sprintln("Error:", err)
 			return
 		}
 		_daocLogs.User.endTime = timeObj
 	}
 }
 
-func (_daocLogs *DaocLogs) writeLogValues(writer *uilive.Writer) {
-	fmt.Fprintf(writer, "Dark Age of Camelot - Chat Parser\nWritten by: Theorist\nIf you have any feedback, feel free to DM in Discord.\n\n")
-	fmt.Fprintln(writer, "********** Melee **********")
-	fmt.Fprintf(writer, "Styles Performed: %d\n", len(_daocLogs.User.movingDamageStyles))
-	fmt.Fprintf(writer, "Base Hits Performed: %d\n", len(_daocLogs.User.movingDamageBaseMelee))
-	fmt.Fprintf(writer, "Misses: %d\n", _daocLogs.User.missesTotal)
-	fmt.Fprintf(writer, "Total Style Damage: %d\n", sumArr(_daocLogs.User.movingDamageStyles))
-	fmt.Fprintf(writer, "Total Base Hit Damage: %d\n", sumArr(_daocLogs.User.movingDamageBaseMelee))
-	fmt.Fprintf(writer, "Total Melee Damage: %d\n", sumArr(_daocLogs.User.movingDamageStyles)+sumArr(_daocLogs.User.movingDamageBaseMelee))
-	fmt.Fprintln(writer, "********** Spells **********")
-	fmt.Fprintf(writer, "Total Spells Performed: %d\n", _daocLogs.User.spellsPerformed)
-	fmt.Fprintf(writer, "Casted Spells Performed: %d\n", _daocLogs.User.castedSpellsPerformed)
-	fmt.Fprintf(writer, "Insta Spells Performed: %d\n", _daocLogs.User.spellsPerformed-_daocLogs.User.castedSpellsPerformed)
-	fmt.Fprintf(writer, "Spells with Damage: %d\n", len(_daocLogs.User.movingDamageSpells))
-	fmt.Fprintf(writer, "Total Resists: %d\n", _daocLogs.User.resistsTotal)
-	fmt.Fprintf(writer, "Total Siphons: %d\n", _daocLogs.User.siphonTotal)
-	fmt.Fprintf(writer, "Spell Damage: %d\n", sumArr(_daocLogs.User.movingDamageSpells))
-	fmt.Fprintf(writer, "Spell Extra Damage: %d\n", sumArr(_daocLogs.User.movingExtraDamage))
-	fmt.Fprintln(writer, "********** Criticals **********")
-	fmt.Fprintf(writer, "Total Crits: %d\n", len(_daocLogs.User.movingCritDamage))
-	fmt.Fprintf(writer, "Total Crit Damage: %d\n", sumArr(_daocLogs.User.movingCritDamage))
-	fmt.Fprintln(writer, "********** Defensives **********")
-	fmt.Fprintf(writer, "Total Blocks: %d\n", _daocLogs.User.blockTotal)
-	fmt.Fprintf(writer, "Total Parrys: %d\n", _daocLogs.User.parryTotal)
-	fmt.Fprintf(writer, "Total Evades: %d\n", _daocLogs.User.evadeTotal)
-	fmt.Fprintf(writer, "Total Stuns: %d\n", _daocLogs.User.totalStuns)
-	fmt.Fprintf(writer, "Total Self Heals: %d\n", _daocLogs.User.totalSelfHeal)
-	fmt.Fprintf(writer, "Total Ablative Absorbs: %d\n", _daocLogs.User.totalAblative)
-	fmt.Fprintln(writer, "********** Enemy **********")
-	fmt.Fprintf(writer, "Enemy Total Hits: %d\n", len(_daocLogs.Enemy.movingDamageTotal))
-	fmt.Fprintf(writer, "Enemy Total Parrys: %d\n", _daocLogs.Enemy.parryTotal)
-	fmt.Fprintf(writer, "Enemy Total Evades: %d\n", _daocLogs.Enemy.evadeTotal)
-	fmt.Fprintf(writer, "Enemy Total Blocks: %d\n", _daocLogs.Enemy.blockTotal)
-	fmt.Fprintf(writer, "Total Damage Taken From Enemy: %d\n", sumArr(_daocLogs.Enemy.movingDamageTotal))
-	fmt.Fprintln(writer, "********** Total **********")
-	fmt.Fprintf(writer, "Total Damage: %d\n", sumArr(_daocLogs.User.movingDamageTotal))
-	fmt.Fprintf(writer, "Total Experience Gained: %d\n", _daocLogs.User.experienceGained)
-	fmt.Fprintf(writer, "Total Killed: %d\n", _daocLogs.User.totalKills)
-	fmt.Fprintf(writer, "Users Hit: %s\n", strings.Join(dedupe(_daocLogs.User.usersHit), ","))
+func (_daocLogs *DaocLogs) writeLogValues() string {
 	totalMinutes := int(_daocLogs.User.endTime.Sub(_daocLogs.User.startTime).Seconds()) / 60
 	totalSeconds := int(_daocLogs.User.endTime.Sub(_daocLogs.User.startTime).Seconds()) - (60 * totalMinutes)
-	fmt.Fprintf(writer, "Total Time: %d minutes and %d seconds\n", totalMinutes, totalSeconds)
+	// fmt.Sprintf("Dark Age of Camelot - Chat Parser\nWritten by: Theorist\nIf you have any feedback, feel free to DM in Discord.\n\n")
+	return fmt.Sprintln("********** Melee **********\n", fmt.Sprintf("Styles Performed: %d\n", len(_daocLogs.User.movingDamageStyles)), fmt.Sprintf("Base Hits Performed: %d\n", len(_daocLogs.User.movingDamageBaseMelee)), fmt.Sprintf("Misses: %d\n", _daocLogs.User.missesTotal), fmt.Sprintf("Total Style Damage: %d\n", sumArr(_daocLogs.User.movingDamageStyles)), fmt.Sprintf("Total Base Hit Damage: %d\n", sumArr(_daocLogs.User.movingDamageBaseMelee)), fmt.Sprintf("Total Melee Damage: %d\n", sumArr(_daocLogs.User.movingDamageStyles)+sumArr(_daocLogs.User.movingDamageBaseMelee)), fmt.Sprintln("********** Spells **********"), fmt.Sprintf("Total Spells Performed: %d\n", _daocLogs.User.spellsPerformed), fmt.Sprintf("Casted Spells Performed: %d\n", _daocLogs.User.castedSpellsPerformed), fmt.Sprintf("Insta Spells Performed: %d\n", _daocLogs.User.spellsPerformed-_daocLogs.User.castedSpellsPerformed), fmt.Sprintf("Spells with Damage: %d\n", len(_daocLogs.User.movingDamageSpells)), fmt.Sprintf("Total Resists: %d\n", _daocLogs.User.resistsTotal), fmt.Sprintf("Total Siphons: %d\n", _daocLogs.User.siphonTotal), fmt.Sprintf("Spell Damage: %d\n", sumArr(_daocLogs.User.movingDamageSpells)), fmt.Sprintf("Spell Extra Damage: %d\n", sumArr(_daocLogs.User.movingExtraDamage)), fmt.Sprintln("********** Criticals **********"), fmt.Sprintf("Total Crits: %d\n", len(_daocLogs.User.movingCritDamage)), fmt.Sprintf("Total Crit Damage: %d\n", sumArr(_daocLogs.User.movingCritDamage)), fmt.Sprintln("********** Defensives **********"), fmt.Sprintf("Total Blocks: %d\n", _daocLogs.User.blockTotal), fmt.Sprintf("Total Parrys: %d\n", _daocLogs.User.parryTotal), fmt.Sprintf("Total Evades: %d\n", _daocLogs.User.evadeTotal), fmt.Sprintf("Total Stuns: %d\n", _daocLogs.User.totalStuns), fmt.Sprintf("Total Self Heals: %d\n", _daocLogs.User.totalSelfHeal), fmt.Sprintf("Total Ablative Absorbs: %d\n", _daocLogs.User.totalAblative), fmt.Sprintln("********** Enemy **********"), fmt.Sprintf("Enemy Total Hits: %d\n", len(_daocLogs.Enemy.movingDamageTotal)), fmt.Sprintf("Enemy Total Parrys: %d\n", _daocLogs.Enemy.parryTotal), fmt.Sprintf("Enemy Total Evades: %d\n", _daocLogs.Enemy.evadeTotal), fmt.Sprintf("Enemy Total Blocks: %d\n", _daocLogs.Enemy.blockTotal), fmt.Sprintf("Total Damage Taken From Enemy: %d\n", sumArr(_daocLogs.Enemy.movingDamageTotal)), fmt.Sprintln("********** Total **********"), fmt.Sprintf("Total Damage: %d\n", sumArr(_daocLogs.User.movingDamageTotal)), fmt.Sprintf("Total Experience Gained: %d\n", _daocLogs.User.experienceGained), fmt.Sprintf("Total Killed: %d\n", _daocLogs.User.totalKills), fmt.Sprintf("Users Hit: %s\n", strings.Join(dedupe(_daocLogs.User.usersHit), ",")), fmt.Sprintf("Total Time: %d minutes and %d seconds\n", totalMinutes, totalSeconds))
 }
