@@ -72,6 +72,7 @@ func main() {
 		}
 
 	})
+	myWindow.SetContent(container.NewBorder(createdBy, refresh, nil, nil, list))
 
 	go func() {
 		openLogFile(FILE_NAME)
@@ -92,7 +93,6 @@ func main() {
 	}()
 
 	myWindow.Resize(fyne.NewSize(600, 300))
-	myWindow.SetContent(container.NewBorder(createdBy, refresh, nil, nil, list))
 	myWindow.ShowAndRun()
 }
 
