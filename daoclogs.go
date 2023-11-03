@@ -6,8 +6,9 @@ import (
 )
 
 type DaocLogs struct {
-	User  Stats
-	Enemy []*Stats
+	User     Stats
+	Enemy    []*Stats
+	Bindings []string
 }
 
 /*
@@ -75,8 +76,20 @@ type Stats struct {
 	Create getters and setters for the stats object
 */
 
-func (_daocLogs *DaocLogs) writeLogValues() string {
-	return _daocLogs.calculateArmorhits() + "\n" + _daocLogs.calculateDamageIn() + "\n" + _daocLogs.calculateEnemyDensives() + "\n" + _daocLogs.calculateDamageOut() + "\n" + _daocLogs.calculateHeal() + "\n" + _daocLogs.calculateDensives() + "\n" + _daocLogs.getCombativeUsers() + "\n" + _daocLogs.calculateTime()
+func (_daocLogs *DaocLogs) writeLogValues() []string {
+	listItems := []string{}
+	listItems = append(listItems, _daocLogs.calculateArmorhits()...)
+	listItems = append(listItems, _daocLogs.calculateDamageIn()...)
+	listItems = append(listItems, _daocLogs.calculateEnemyDensives()...)
+	listItems = append(listItems, _daocLogs.calculateDamageOut()...)
+	listItems = append(listItems, _daocLogs.calculateHeal()...)
+	listItems = append(listItems, _daocLogs.calculateDensives()...)
+	listItems = append(listItems, _daocLogs.getCombativeUsers()...)
+	listItems = append(listItems, _daocLogs.calculateTime()...)
+	return listItems
+	// _daocLogs.calculateDamageOut()
+	// return []string{_daocLogs.calculateArmorhits(), _daocLogs.calculateDamageIn(), _daocLogs.calculateEnemyDensives(), _daocLogs.calculateDamageOut(), _daocLogs.calculateHeal(), _daocLogs.calculateDensives(), _daocLogs.getCombativeUsers(), _daocLogs.calculateTime()}
+	// return _daocLogs.calculateArmorhits() + "\n" + _daocLogs.calculateDamageIn() + "\n" + _daocLogs.calculateEnemyDensives() + "\n" + _daocLogs.calculateDamageOut() + "\n" + _daocLogs.calculateHeal() + "\n" + _daocLogs.calculateDensives() + "\n" + _daocLogs.getCombativeUsers() + "\n" + _daocLogs.calculateTime()
 }
 
 func (_daocLogs *DaocLogs) getUser() *Stats {

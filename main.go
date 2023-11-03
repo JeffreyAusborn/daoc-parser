@@ -6,10 +6,16 @@ import (
 	"os"
 	"time"
 
-	"fyne.io/fyne"
-	"fyne.io/fyne/app"
-	"fyne.io/fyne/container"
-	"fyne.io/fyne/widget"
+	// "fyne.io/fyne"
+	// "fyne.io/fyne/app"
+	// "fyne.io/fyne/container"
+	// "fyne.io/fyne/v2/data/binding"
+	// "fyne.io/fyne/widget"
+	"fyne.io/fyne/v2"
+	"fyne.io/fyne/v2/app"
+	"fyne.io/fyne/v2/container"
+	"fyne.io/fyne/v2/data/binding"
+	"fyne.io/fyne/v2/widget"
 )
 
 const (
@@ -29,36 +35,79 @@ func readChatFile(r fyne.URIReadCloser, err error) {
 	fmt.Println(r.URI())
 }
 
+type ListItem struct {
+	Text string
+}
+
 func main() {
 	daocLogs = DaocLogs{}
-	a := app.New()
-	w := a.NewWindow("Dark Age of Camelot - Chat Parser")
-	damageLabel := widget.NewLabel("")
-	createdBy := widget.NewLabel("Created by Theorist")
 
-	w.SetContent(container.NewVBox(
-		damageLabel,
-		widget.NewButton("Refresh", func() {
-			e := os.Remove(FILE_NAME)
-			if e != nil {
-				fmt.Println(e)
-			}
-		}),
-		createdBy,
-	))
+	myApp := app.New()
+	myWindow := myApp.NewWindow("Dark Age of Camelot - Chat Parser")
+
+	data := binding.BindStringList(
+		&[]string{},
+	)
+
+	list := widget.NewListWithData(data,
+		func() fyne.CanvasObject {
+			return widget.NewLabel("")
+		},
+		func(i binding.DataItem, o fyne.CanvasObject) {
+			o.(*widget.Label).Bind(i.(binding.String))
+		},
+	)
+	list.Resize(fyne.Size{Height: 434})
+
+	// add := widget.NewButton("Append", func() {
+	// 	val := fmt.Sprintf("Item %d", data.Length()+1)
+	// 	data.Append(val)
+	// })
+
+	// a := app.New()
+	// w := a.NewWindow("Dark Age of Camelot - Chat Parser")
+
+	// damageLabel := widget.NewLabel("")
+	// createdBy := widget.NewLabel("Created by Theorist")
+
+	// w.SetContent(container.NewVBox(
+	// 	damageLabel,
+	// 	widget.NewButton("Refresh", func() {
+	// 		e := os.Remove(FILE_NAME)
+	// 		if e != nil {
+	// 			fmt.Println(e)
+	// 		}
+	// 	}),
+	// 	createdBy,
+	// ))
 
 	go func() {
 		openLogFile(FILE_NAME)
-		damageLabel.SetText(daocLogs.writeLogValues())
+		// fmt.Println(daocLogs.writeLogValues())
+		for _, item := range daocLogs.writeLogValues() {
+			data.Append(item)
+		}
+		// damageLabel.SetText(daocLogs.writeLogValues())
 		for range time.Tick(time.Second * LOG_STREAM_TIME) {
 			daocLogs = DaocLogs{}
+			data = binding.BindStringList(
+				&[]string{},
+			)
 			openLogFile(FILE_NAME)
-			damageLabel.SetText(daocLogs.writeLogValues())
+			// fmt.Println(daocLogs.writeLogValues())
+			// damageLabel.SetText(daocLogs.writeLogValues())
+			for _, item := range daocLogs.writeLogValues() {
+				data.Append(item)
+			}
+			data.Reload()
 		}
 	}()
 
-	w.Resize(fyne.NewSize(600, 400))
-	w.ShowAndRun()
+	myWindow.Resize(fyne.NewSize(600, 300))
+	// w.SetContent(scrollContainer)
+	// w.ShowAndRun()
+	myWindow.SetContent(container.NewBorder(nil, nil, nil, nil, list))
+	myWindow.ShowAndRun()
 }
 
 func openLogFile(logPath string) {
