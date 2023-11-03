@@ -64,7 +64,13 @@ func main() {
 		e := os.Remove(FILE_NAME)
 		if e != nil {
 			fmt.Println(e)
+		} else {
+			data = binding.BindStringList(
+				&[]string{},
+			)
+			data.Reload()
 		}
+
 	})
 
 	go func() {
