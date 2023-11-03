@@ -42,21 +42,24 @@ func (_daocLogs *DaocLogs) regexOffensive(line string, style bool) bool {
 	}
 	match, _ = regexp.MatchString("You hit.*for.*damage!", line)
 	if match {
-		damage := strings.Split(line, " for ")[1]
-		damage = strings.Split(damage, " damage")[0]
-		damage = strings.Split(damage, " ")[0]
-		damageInt, _ := strconv.Atoi(damage)
-		match, _ = regexp.MatchString("extra damage", line)
-		if match {
-			_daocLogs.getUser().MovingExtraDamage = append(_daocLogs.getUser().MovingExtraDamage, damageInt)
-		} else {
-			_daocLogs.getUser().MovingDamageSpells = append(_daocLogs.getUser().MovingDamageSpells, damageInt)
-		}
-		_daocLogs.getUser().MovingDamageTotal = append(_daocLogs.getUser().MovingDamageTotal, damageInt)
+		match, _ = regexp.MatchString("critically hit", line)
+		if !match {
+			damage := strings.Split(line, " for ")[1]
+			damage = strings.Split(damage, " damage")[0]
+			damage = strings.Split(damage, " ")[0]
+			damageInt, _ := strconv.Atoi(damage)
+			match, _ = regexp.MatchString("extra damage", line)
+			if match {
+				_daocLogs.getUser().MovingExtraDamage = append(_daocLogs.getUser().MovingExtraDamage, damageInt)
+			} else {
+				_daocLogs.getUser().MovingDamageSpells = append(_daocLogs.getUser().MovingDamageSpells, damageInt)
+			}
+			_daocLogs.getUser().MovingDamageTotal = append(_daocLogs.getUser().MovingDamageTotal, damageInt)
 
-		user := strings.Split(line, "You hit ")[1]
-		user = strings.Split(user, " for")[0]
-		_daocLogs.getUser().UsersHit = append(_daocLogs.getUser().UsersHit, user)
+			user := strings.Split(line, "You hit ")[1]
+			user = strings.Split(user, " for")[0]
+			_daocLogs.getUser().UsersHit = append(_daocLogs.getUser().UsersHit, user)
+		}
 	}
 	match, _ = regexp.MatchString("Your.*hits.*for.*damage", line)
 	if match {
