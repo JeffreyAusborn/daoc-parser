@@ -6,7 +6,8 @@ Parsing Dark Age of Camelot chat.log file in order to provide user and enemy bas
     - Install GO
         - https://go.dev/doc/install
     - ```go build```
-    - ```./parser --file chat.log --stream```
+    - copy parser.exe to the folder where chat.log exists
+    - ```./parser```
 - For windows
     - Install GO
         - https://go.dev/doc/install
@@ -16,13 +17,8 @@ Parsing Dark Age of Camelot chat.log file in order to provide user and enemy bas
         - ```go env -w CGO_ENABLED=1```
     - Build
     - ```go build```
-    - ```./parser.exe --file chat.log --stream```
-
-# Parameters
-- --file is the path to the chat.log
-- --stream is a boolean flag to psuedo stream the chat logs into the parser
-    - If enabling stream, you will need to disable daoc logs to flush the buffer.
-    - Will read the log file every 3 seconds
+    - copy parser.exe to the folder where chat.log exists
+    - ```./parser.exe```
 
 # TODO Features
 - Create more regex stats
