@@ -24,10 +24,9 @@ var (
 func main() {
 	daocLogs = DaocLogs{}
 	a := app.New()
-	w := a.NewWindow("Dark Age of Camelot - Chat Parser\nWritten by: Theorist\nIf you have any feedback, feel free to DM in Discord.\n\n")
-	w.Resize(fyne.NewSize(300.0, 300.0))
+	w := a.NewWindow("Dark Age of Camelot - Chat Parser")
 	damageLabel := widget.NewLabel("")
-
+	w.SetContent(container.NewVBox(damageLabel))
 	go func() {
 		logPath := flag.String("file", "", "Path to chat.log")
 		streamLogs := flag.Bool("stream", false, "")
@@ -47,7 +46,7 @@ func main() {
 		}
 	}()
 
-	w.SetContent(container.NewVBox(damageLabel))
+	w.Resize(fyne.NewSize(600, 400))
 	w.ShowAndRun()
 }
 

@@ -2,12 +2,21 @@
 Parsing Dark Age of Camelot chat.log file in order to provide user and enemy based stats 
 
 # How to build and run
-- For linux
+- For linux/mac
+    - Install GO
+        - https://go.dev/doc/install
     - ```go build```
     - ```./parser --file chat.log --stream```
 - For windows
-    - ```GOOS=windows GOARCH=amd64 go build -o daocParserWindows.exe```
-    - ```./daocParserWindows.exe --file chat.log --stream```
+    - Install GO
+        - https://go.dev/doc/install
+    - Might need to install tdm-gcc
+        - https://jmeubank.github.io/tdm-gcc/
+    - Set CGO_ENABLED=1
+        - ```go env -w CGO_ENABLED=1```
+    - Build
+    - ```go build```
+    - ```./parser.exe --file chat.log --stream```
 
 # Parameters
 - --file is the path to the chat.log
@@ -20,7 +29,7 @@ Parsing Dark Age of Camelot chat.log file in order to provide user and enemy bas
     - Heals
     - Pets
     - PvE?
-- Create stats on the values
+- Create rates on the values
     - Hit rate
     - Resist rate
     - Parry rate
@@ -32,9 +41,6 @@ Parsing Dark Age of Camelot chat.log file in order to provide user and enemy bas
 - Style and Spells breakdown
     - Create similar overall stats but by style and spell
 - Window overlay
-    - Create window
-    - Set opacity and make sure it stays on top
-    - Parse logs
-    - Update values in window
+    - Convert the window to an overlay?
 - Log enable / disable
     - Enable and disable logs for the user in order to flush the log buffer
