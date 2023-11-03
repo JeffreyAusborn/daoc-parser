@@ -166,7 +166,7 @@ func (_daocLogs *DaocLogs) getCombativeUsers() string {
 
 	if len(users) > 0 {
 		combative := "----- Combatives -----\n"
-		combativeUsers := fmt.Sprintf("\t%s\n", strings.Join(dedupe(users), ","))
+		combativeUsers := fmt.Sprintf("%s\n", strings.Join(dedupe(users), "\t\n"))
 		return combative + combativeUsers
 	}
 	return ""
