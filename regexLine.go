@@ -43,7 +43,7 @@ func (_daocLogs *DaocLogs) regexOffensive(line string, style bool) bool {
 	if match {
 		_daocLogs.getUser().CastedSpellsPerformed += 1
 	}
-	match, _ = regexp.MatchString("You hit.*for.*damage!", line)
+	match, _ = regexp.MatchString("You hit.*for.*damage", line)
 	if match {
 		match, _ = regexp.MatchString("critically hit", line)
 		if !match {
@@ -61,6 +61,7 @@ func (_daocLogs *DaocLogs) regexOffensive(line string, style bool) bool {
 
 			user := strings.Split(line, "You hit ")[1]
 			user = strings.Split(user, " for")[0]
+			userStats := _daocLogs.findEnemyStats(user)
 			_daocLogs.getUser().UsersHit = append(_daocLogs.getUser().UsersHit, user)
 		}
 	}
