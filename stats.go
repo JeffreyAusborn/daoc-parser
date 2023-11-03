@@ -161,6 +161,10 @@ func (_daocLogs *DaocLogs) calculateEnemyDensives() string {
 func (_daocLogs *DaocLogs) getCombativeUsers() string {
 	users := []string{}
 	for _, user := range _daocLogs.Enemy {
+		fmt.Println(user.UserName)
+		if user.UserName == "critically" {
+			fmt.Printf("%v", user)
+		}
 		users = append(users, user.UserName)
 	}
 
