@@ -11,22 +11,25 @@ import (
 func (_daocLogs *DaocLogs) regexOffensive(line string, style bool) bool {
 	match, _ := regexp.MatchString("You attack.*with your.*and hit for.*damage", line)
 	if match {
-		damage := strings.Split(line, "and hit for ")[1]
-		damage = strings.Split(damage, " damage")[0]
-		damage = strings.Split(damage, " ")[0]
-		damageInt, _ := strconv.Atoi(damage)
-		_daocLogs.getUser().MovingDamageTotal = append(_daocLogs.getUser().MovingDamageTotal, damageInt)
-		if style {
-			style = false
-			_daocLogs.getUser().MovingDamageStyles = append(_daocLogs.getUser().MovingDamageStyles, damageInt)
-		} else {
-			_daocLogs.getUser().MovingDamageBaseMelee = append(_daocLogs.getUser().MovingDamageBaseMelee, damageInt)
-		}
+		match, _ = regexp.MatchString("critically hit", line)
+		if !match {
+			damage := strings.Split(line, "and hit for ")[1]
+			damage = strings.Split(damage, " damage")[0]
+			damage = strings.Split(damage, " ")[0]
+			damageInt, _ := strconv.Atoi(damage)
+			_daocLogs.getUser().MovingDamageTotal = append(_daocLogs.getUser().MovingDamageTotal, damageInt)
+			if style {
+				style = false
+				_daocLogs.getUser().MovingDamageStyles = append(_daocLogs.getUser().MovingDamageStyles, damageInt)
+			} else {
+				_daocLogs.getUser().MovingDamageBaseMelee = append(_daocLogs.getUser().MovingDamageBaseMelee, damageInt)
+			}
 
-		user := strings.Split(line, "You attack ")[1]
-		user = strings.Split(user, " with your")[0]
-		userStats := _daocLogs.findEnemyStats(user)
-		userStats.MovingDamageReceived = append(userStats.MovingDamageReceived, damageInt)
+			user := strings.Split(line, "You attack ")[1]
+			user = strings.Split(user, " with your")[0]
+			userStats := _daocLogs.findEnemyStats(user)
+			userStats.MovingDamageReceived = append(userStats.MovingDamageReceived, damageInt)
+		}
 	}
 	match, _ = regexp.MatchString("You prepare to perform", line)
 	if match {
