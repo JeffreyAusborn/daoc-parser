@@ -88,7 +88,7 @@ func (_daocLogs *DaocLogs) calculateHeal() string {
 			allHeal = fmt.Sprintf("\tAll Heals: %d\n", sumArr(_daocLogs.User.TotalHeals))
 		}
 		if len(_daocLogs.User.TotalHealsCrits) > 0 {
-			healCrits = fmt.Sprintf("\tHeal Crits: %d\n", _daocLogs.User.TotalHealsCrits)
+			healCrits = fmt.Sprintf("\tHeal Crits: %d\n", sumArr(_daocLogs.User.TotalHealsCrits))
 		}
 		if len(_daocLogs.User.TotalAbsorbed) > 0 {
 			selfAbsorb = fmt.Sprintf("\tAbsorbed: %d\n", sumArr(_daocLogs.User.TotalAbsorbed))

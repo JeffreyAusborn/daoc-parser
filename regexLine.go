@@ -147,7 +147,7 @@ func (_daocLogs *DaocLogs) regexSupport(line string) {
 	}
 	match, _ = regexp.MatchString("heal criticals", line)
 	if match {
-		healing := strings.Split(line, "for an ")[1]
+		healing := strings.Split(line, "for an extra ")[1]
 		healing = strings.Split(healing, " amount")[0]
 		healingInt, _ := strconv.Atoi(healing)
 		_daocLogs.getUser().TotalHealsCrits = append(_daocLogs.getUser().TotalHealsCrits, healingInt)
@@ -215,43 +215,59 @@ func (_daocLogs *DaocLogs) regexEnemy(line string) {
 		userStats := _daocLogs.findEnemyStats(user)
 		userStats.BlockTotal += 1
 	}
-	match, _ = regexp.MatchString("hits your.*for ", line)
+	match, _ = regexp.MatchString("hits you for.*damage ", line)
 	if match {
 		damage := strings.Split(line, "for ")[1]
 		damage = strings.Split(damage, " damage")[0]
 		damage = strings.Split(damage, " ")[0]
 		damageInt, _ := strconv.Atoi(damage)
 
-		user := strings.Split(line, " hits your")[0]
+		user := strings.Split(line, " hita you")[0]
 		user = strings.Split(line, " ")[1]
 		userStats := _daocLogs.findEnemyStats(user)
 
 		userStats.MovingDamageTotal = append(userStats.MovingDamageTotal, damageInt)
+	}
+	match, _ = regexp.MatchString("hits your.*for ", line)
+	if match {
+		match, _ = regexp.MatchString("critically hits you", line)
+		if !match {
+			damage := strings.Split(line, "for ")[1]
+			damage = strings.Split(damage, " damage")[0]
+			damage = strings.Split(damage, " ")[0]
+			damageInt, _ := strconv.Atoi(damage)
 
-		armorPiece := strings.Split(line, " for")[0]
-		armorPiece = strings.Split(armorPiece, "your ")[1]
+			user := strings.Split(line, " hits your")[0]
+			user = strings.Split(line, " ")[1]
+			userStats := _daocLogs.findEnemyStats(user)
 
-		switch armorPiece {
-		case "head":
-			userStats.ArmorHit.Head = append(userStats.ArmorHit.Head, damageInt)
-			userStats.MovingDamageStyles = append(userStats.MovingDamageStyles, damageInt)
-		case "torso":
-			userStats.ArmorHit.Torso = append(userStats.ArmorHit.Torso, damageInt)
-			userStats.MovingDamageStyles = append(userStats.MovingDamageStyles, damageInt)
-		case "leg":
-			userStats.ArmorHit.Leg = append(userStats.ArmorHit.Leg, damageInt)
-			userStats.MovingDamageStyles = append(userStats.MovingDamageStyles, damageInt)
-		case "arm":
-			userStats.ArmorHit.Arm = append(userStats.ArmorHit.Arm, damageInt)
-			userStats.MovingDamageStyles = append(userStats.MovingDamageStyles, damageInt)
-		case "hand":
-			userStats.ArmorHit.Hand = append(userStats.ArmorHit.Hand, damageInt)
-			userStats.MovingDamageStyles = append(userStats.MovingDamageStyles, damageInt)
-		case "foot":
-			userStats.ArmorHit.Foot = append(userStats.ArmorHit.Foot, damageInt)
-			userStats.MovingDamageStyles = append(userStats.MovingDamageStyles, damageInt)
-		default:
-			break
+			userStats.MovingDamageTotal = append(userStats.MovingDamageTotal, damageInt)
+
+			armorPiece := strings.Split(line, " for")[0]
+			armorPiece = strings.Split(armorPiece, "your ")[1]
+
+			switch armorPiece {
+			case "head":
+				userStats.ArmorHit.Head = append(userStats.ArmorHit.Head, damageInt)
+				userStats.MovingDamageStyles = append(userStats.MovingDamageStyles, damageInt)
+			case "torso":
+				userStats.ArmorHit.Torso = append(userStats.ArmorHit.Torso, damageInt)
+				userStats.MovingDamageStyles = append(userStats.MovingDamageStyles, damageInt)
+			case "leg":
+				userStats.ArmorHit.Leg = append(userStats.ArmorHit.Leg, damageInt)
+				userStats.MovingDamageStyles = append(userStats.MovingDamageStyles, damageInt)
+			case "arm":
+				userStats.ArmorHit.Arm = append(userStats.ArmorHit.Arm, damageInt)
+				userStats.MovingDamageStyles = append(userStats.MovingDamageStyles, damageInt)
+			case "hand":
+				userStats.ArmorHit.Hand = append(userStats.ArmorHit.Hand, damageInt)
+				userStats.MovingDamageStyles = append(userStats.MovingDamageStyles, damageInt)
+			case "foot":
+				userStats.ArmorHit.Foot = append(userStats.ArmorHit.Foot, damageInt)
+				userStats.MovingDamageStyles = append(userStats.MovingDamageStyles, damageInt)
+			default:
+				break
+			}
 		}
 	}
 	match, _ = regexp.MatchString("critically hits you", line)
