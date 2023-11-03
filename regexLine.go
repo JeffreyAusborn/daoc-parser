@@ -61,7 +61,7 @@ func (_daocLogs *DaocLogs) regexOffensive(line string, style bool) bool {
 
 			user := strings.Split(line, "You hit ")[1]
 			user = strings.Split(user, " for")[0]
-			userStats := _daocLogs.findEnemyStats(user)
+			_daocLogs.findEnemyStats(user)
 			_daocLogs.getUser().UsersHit = append(_daocLogs.getUser().UsersHit, user)
 		}
 	}
