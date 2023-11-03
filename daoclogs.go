@@ -47,14 +47,16 @@ type Stats struct {
 
 	ExperienceGained []int // experience gain
 
-	TotalSelfHeal []int // self healing - procs, styles, spells
-	TotalHeals    []int // healing all - procs, styles, spells,
-	TotalAbsorbed []int // how many absorbs a player has had
+	TotalSelfHeal   []int // self healing
+	TotalHeals      []int // healing all
+	TotalHealsCrits []int // healing crits
+	TotalAbsorbed   []int // how many absorbs a player has had
 
 	TotalStuns            int
 	SpellsPerformed       int
 	CastedSpellsPerformed int
-	ResistsTotal          int
+	ResistsOutTotal       int
+	ResistsInTotal        int
 	MissesTotal           int
 	SiphonTotal           int
 	BlockTotal            int
@@ -71,7 +73,7 @@ type Stats struct {
 */
 
 func (_daocLogs *DaocLogs) writeLogValues() string {
-	return _daocLogs.calculateArmorhits() + "\n" + _daocLogs.calculateDamageIn() + "\n" + _daocLogs.calculateEnemyDensives() + "\n" + _daocLogs.calculateDamageOut() + "\n" + _daocLogs.calculateHeal() + "\n" + _daocLogs.calculateDensives() + "\n" + _daocLogs.calculateTime()
+	return _daocLogs.calculateArmorhits() + "\n" + _daocLogs.calculateDamageIn() + "\n" + _daocLogs.calculateEnemyDensives() + "\n" + _daocLogs.calculateDamageOut() + "\n" + _daocLogs.calculateHeal() + "\n" + _daocLogs.calculateDensives() + "\n" + _daocLogs.getCombativeUsers() + "\n" + _daocLogs.calculateTime()
 }
 
 func (_daocLogs *DaocLogs) getUser() *Stats {

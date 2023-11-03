@@ -78,7 +78,7 @@ func (_daocLogs *DaocLogs) regexOffensive(line string, style bool) bool {
 	}
 	match, _ = regexp.MatchString("resists the effect.*", line)
 	if match {
-		_daocLogs.getUser().ResistsTotal += 1
+		_daocLogs.getUser().ResistsOutTotal += 1
 	}
 	match, _ = regexp.MatchString("You gather energy from your surroundings.*", line)
 	if match {
@@ -124,6 +124,10 @@ func (_daocLogs *DaocLogs) regexDefensives(line string) {
 		absorbInt, _ := strconv.Atoi(absorb)
 		_daocLogs.getUser().TotalAbsorbed = append(_daocLogs.getUser().TotalAbsorbed, absorbInt)
 	}
+	match, _ = regexp.MatchString("You resist the effect", line)
+	if match {
+		_daocLogs.getUser().ResistsInTotal += 1
+	}
 }
 
 func (_daocLogs *DaocLogs) regexSupport(line string) {
@@ -140,6 +144,13 @@ func (_daocLogs *DaocLogs) regexSupport(line string) {
 		healing = strings.Split(healing, " hit points")[0]
 		healingInt, _ := strconv.Atoi(healing)
 		_daocLogs.getUser().TotalHeals = append(_daocLogs.getUser().TotalHeals, healingInt)
+	}
+	match, _ = regexp.MatchString("heal criticals", line)
+	if match {
+		healing := strings.Split(line, "for an ")[1]
+		healing = strings.Split(healing, " amount")[0]
+		healingInt, _ := strconv.Atoi(healing)
+		_daocLogs.getUser().TotalHealsCrits = append(_daocLogs.getUser().TotalHealsCrits, healingInt)
 	}
 	match, _ = regexp.MatchString("is stunned and cannot move", line)
 	if match {
@@ -175,6 +186,10 @@ func (_daocLogs *DaocLogs) regexMisc(line string) {
 	match, _ = regexp.MatchString("You just killed", line)
 	if match {
 		_daocLogs.getUser().TotalKills += 1
+	}
+	match, _ = regexp.MatchString("You have dued", line)
+	if match {
+		_daocLogs.getUser().TotalDeaths += 1
 	}
 }
 

@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"strings"
 )
 
 func (_daocLogs *DaocLogs) calculateDamageOut() string {
@@ -24,8 +25,8 @@ func (_daocLogs *DaocLogs) calculateDamageOut() string {
 			critDamage = fmt.Sprintf("\tCrit Hit: %d\n\tCrit Damage: %d\n", len(_daocLogs.User.MovingCritDamage), sumArr(_daocLogs.User.MovingCritDamage))
 		}
 
-		if _daocLogs.User.ResistsTotal > 0 {
-			spellsResists = fmt.Sprintf("\tResits: %d\n", _daocLogs.User.ResistsTotal)
+		if _daocLogs.User.ResistsOutTotal > 0 {
+			spellsResists = fmt.Sprintf("\tResits: %d\n", _daocLogs.User.ResistsOutTotal)
 		}
 		if _daocLogs.User.MissesTotal > 0 {
 			meleeMiss = fmt.Sprintf("\tMisses: %d\n", _daocLogs.User.MissesTotal)
@@ -64,6 +65,9 @@ func (_daocLogs *DaocLogs) calculateDamageIn() string {
 		if totalDamageSpell > 0 {
 			spellDamage = fmt.Sprintf("\tSpell Hit: %d\n\tSpell Damage: %d\n", len(totalAllDamage)-len(totalMeleeDamage), totalDamageSpell)
 		}
+		if _daocLogs.getUser().TotalDeaths > 0 {
+			spellDamage = fmt.Sprintf("\tDeaths: %d\n", daocLogs.getUser().TotalDeaths)
+		}
 		return damageIn + meleeDamage + spellDamage
 	}
 	return ""
@@ -76,11 +80,15 @@ func (_daocLogs *DaocLogs) calculateHeal() string {
 		selfAbsorb := ""
 		allHeal := ""
 		overHeal := ""
+		healCrits := ""
 		if len(_daocLogs.User.TotalSelfHeal) > 0 {
 			selfHeal = fmt.Sprintf("\tSelf Heals: %d\n", sumArr(_daocLogs.User.TotalSelfHeal))
 		}
 		if len(_daocLogs.User.TotalHeals) > 0 {
 			allHeal = fmt.Sprintf("\tAll Heals: %d\n", sumArr(_daocLogs.User.TotalHeals))
+		}
+		if len(_daocLogs.User.TotalHealsCrits) > 0 {
+			healCrits = fmt.Sprintf("\tHeal Crits: %d\n", _daocLogs.User.TotalHealsCrits)
 		}
 		if len(_daocLogs.User.TotalAbsorbed) > 0 {
 			selfAbsorb = fmt.Sprintf("\tAbsorbed: %d\n", sumArr(_daocLogs.User.TotalAbsorbed))
@@ -88,18 +96,19 @@ func (_daocLogs *DaocLogs) calculateHeal() string {
 		if _daocLogs.User.OverHeals > 0 {
 			overHeal = fmt.Sprintf("\tOverHeal Count: %d\n", _daocLogs.User.OverHeals)
 		}
-		return healAndAbsorb + selfHeal + allHeal + overHeal + selfAbsorb
+		return healAndAbsorb + selfHeal + allHeal + healCrits + overHeal + selfAbsorb
 	}
 	return ""
 }
 
 func (_daocLogs *DaocLogs) calculateDensives() string {
-	if len(_daocLogs.User.TotalSelfHeal)+len(_daocLogs.User.TotalAbsorbed)+len(_daocLogs.User.TotalHeals) > 0 {
+	if _daocLogs.User.BlockTotal+_daocLogs.User.ParryTotal+_daocLogs.User.EvadeTotal+_daocLogs.User.TotalStuns+_daocLogs.User.ResistsInTotal > 0 {
 		defensives := "----- Defensives -----\n"
 		block := ""
 		parry := ""
 		evade := ""
 		stuns := ""
+		resists := ""
 		if _daocLogs.User.BlockTotal > 0 {
 			block = fmt.Sprintf("\tBlock: %d\n", _daocLogs.User.BlockTotal)
 		}
@@ -112,7 +121,10 @@ func (_daocLogs *DaocLogs) calculateDensives() string {
 		if _daocLogs.User.TotalStuns > 0 {
 			stuns = fmt.Sprintf("\tStuns: %d\n", _daocLogs.User.TotalStuns)
 		}
-		return defensives + block + parry + evade + stuns
+		if _daocLogs.User.TotalStuns > 0 {
+			resists = fmt.Sprintf("\tResists: %d\n", _daocLogs.User.ResistsInTotal)
+		}
+		return defensives + block + parry + evade + stuns + resists
 	}
 	return ""
 }
@@ -142,6 +154,20 @@ func (_daocLogs *DaocLogs) calculateEnemyDensives() string {
 			evade = fmt.Sprintf("\tEvade: %d\n", evades)
 		}
 		return defensives + block + parry + evade
+	}
+	return ""
+}
+
+func (_daocLogs *DaocLogs) getCombativeUsers() string {
+	users := []string{}
+	for _, user := range _daocLogs.Enemy {
+		users = append(users, user.UserName)
+	}
+
+	if len(users) > 0 {
+		combative := "----- Combatives -----\n"
+		combativeUsers := fmt.Sprintf("\t%s\n", strings.Join(dedupe(users), ","))
+		return combative + combativeUsers
 	}
 	return ""
 }
