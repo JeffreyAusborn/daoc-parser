@@ -285,7 +285,7 @@ func (_daocLogs *DaocLogs) regexEnemy(line string) {
 		damage = strings.Split(damage, " damage")[0]
 		damageInt, _ := strconv.Atoi(damage)
 		user := strings.Split(line, " critically")[0]
-		user = strings.Split(user, " ")[1]
+		user = strings.Split(user, " ")[0]
 		playerStats := _daocLogs.findEnemyStats(user)
 		playerStats.MovingDamageTotal = append(playerStats.MovingDamageTotal, damageInt)
 		playerStats.MovingCritDamage = append(playerStats.MovingCritDamage, damageInt)
