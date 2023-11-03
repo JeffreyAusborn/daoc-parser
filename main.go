@@ -3,7 +3,6 @@ package main
 import (
 	"bufio"
 	"fmt"
-	"log"
 	"os"
 	"time"
 
@@ -42,7 +41,7 @@ func main() {
 		widget.NewButton("Refresh", func() {
 			e := os.Remove(FILE_NAME)
 			if e != nil {
-				log.Fatal(e)
+				fmt.Println(e)
 			}
 		}),
 		createdBy,
