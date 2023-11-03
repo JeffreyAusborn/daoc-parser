@@ -7,8 +7,8 @@ import (
 	"os"
 	"time"
 
-	fyne "fyne.io/fyne"
-	fa "fyne.io/fyne/app"
+	"fyne.io/fyne"
+	"fyne.io/fyne/app"
 	"fyne.io/fyne/container"
 	"fyne.io/fyne/widget"
 )
@@ -32,7 +32,7 @@ func readChatFile(r fyne.URIReadCloser, err error) {
 
 func main() {
 	daocLogs = DaocLogs{}
-	a := fa.New()
+	a := app.New()
 	w := a.NewWindow("Dark Age of Camelot - Chat Parser")
 	damageLabel := widget.NewLabel("")
 	createdBy := widget.NewLabel("Created by Theorist")

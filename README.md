@@ -40,6 +40,10 @@ Parsing Dark Age of Camelot chat.log file in order to provide user and enemy bas
     - Average damage
 - Style and Spells breakdown
     - Create similar overall stats but by style and spell
+- Support abilities?
+    - mez, root, snare, etc
+    - logs don't show this but we could parse daoc char planner, rip out all abilities that is a mez, root, snare.
+    - Use a map of abilities to know ability/style types
 - Window overlay
     - Convert the window to an overlay?
 - Log enable / disable
