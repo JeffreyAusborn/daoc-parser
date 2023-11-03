@@ -162,7 +162,7 @@ func (_daocLogs *DaocLogs) regexSupport(line string) {
 	if match {
 		_daocLogs.getUser().TotalStuns += 1
 		user := strings.Split(line, " is ")[0]
-		user = strings.Split(user, " ")[1]
+		user = strings.Split(user, "] ")[1]
 		userStats := _daocLogs.findEnemyStats(user)
 		userStats.TotalStuns += 1
 	}
@@ -230,8 +230,8 @@ func (_daocLogs *DaocLogs) regexEnemy(line string) {
 			damage = strings.Split(damage, " ")[0]
 			damageInt, _ := strconv.Atoi(damage)
 
-			user := strings.Split(line, " hita you")[0]
-			user = strings.Split(line, " ")[1]
+			user := strings.Split(line, " hits you")[0]
+			user = strings.Split(line, "] ")[1]
 			userStats := _daocLogs.findEnemyStats(user)
 
 			userStats.MovingDamageTotal = append(userStats.MovingDamageTotal, damageInt)
@@ -247,7 +247,7 @@ func (_daocLogs *DaocLogs) regexEnemy(line string) {
 			damageInt, _ := strconv.Atoi(damage)
 
 			user := strings.Split(line, " hits your")[0]
-			user = strings.Split(line, " ")[1]
+			user = strings.Split(line, "] ")[1]
 			userStats := _daocLogs.findEnemyStats(user)
 
 			userStats.MovingDamageTotal = append(userStats.MovingDamageTotal, damageInt)
