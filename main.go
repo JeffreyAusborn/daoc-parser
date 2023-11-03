@@ -57,45 +57,27 @@ func main() {
 			o.(*widget.Label).Bind(i.(binding.String))
 		},
 	)
-	list.Resize(fyne.Size{Height: 434})
 
-	// add := widget.NewButton("Append", func() {
-	// 	val := fmt.Sprintf("Item %d", data.Length()+1)
-	// 	data.Append(val)
-	// })
+	createdBy := widget.NewLabel("Created by Theorist")
 
-	// a := app.New()
-	// w := a.NewWindow("Dark Age of Camelot - Chat Parser")
-
-	// damageLabel := widget.NewLabel("")
-	// createdBy := widget.NewLabel("Created by Theorist")
-
-	// w.SetContent(container.NewVBox(
-	// 	damageLabel,
-	// 	widget.NewButton("Refresh", func() {
-	// 		e := os.Remove(FILE_NAME)
-	// 		if e != nil {
-	// 			fmt.Println(e)
-	// 		}
-	// 	}),
-	// 	createdBy,
-	// ))
+	refresh := widget.NewButton("Refresh", func() {
+		e := os.Remove(FILE_NAME)
+		if e != nil {
+			fmt.Println(e)
+		}
+	})
 
 	go func() {
 		openLogFile(FILE_NAME)
-		// fmt.Println(daocLogs.writeLogValues())
 		for _, item := range daocLogs.writeLogValues() {
 			data.Append(item)
 		}
-		// damageLabel.SetText(daocLogs.writeLogValues())
 		for range time.Tick(time.Second * LOG_STREAM_TIME) {
 			daocLogs = DaocLogs{}
 			data = binding.BindStringList(
 				&[]string{},
 			)
 			openLogFile(FILE_NAME)
-			// fmt.Println(daocLogs.writeLogValues())
-			// damageLabel.SetText(daocLogs.writeLogValues())
 			for _, item := range daocLogs.writeLogValues() {
 				data.Append(item)
 			}
@@ -104,9 +86,7 @@ func main() {
 	}()
 
 	myWindow.Resize(fyne.NewSize(600, 300))
-	// w.SetContent(scrollContainer)
-	// w.ShowAndRun()
-	myWindow.SetContent(container.NewBorder(nil, nil, nil, nil, list))
+	myWindow.SetContent(container.NewBorder(createdBy, refresh, nil, nil, list))
 	myWindow.ShowAndRun()
 }
 
