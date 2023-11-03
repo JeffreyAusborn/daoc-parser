@@ -10,17 +10,16 @@ import (
 	fyne "fyne.io/fyne"
 	fa "fyne.io/fyne/app"
 	"fyne.io/fyne/container"
-	"fyne.io/fyne/dialog"
 	"fyne.io/fyne/widget"
 )
 
 const (
 	LOG_STREAM_TIME = 3
+	FILE_NAME       = "chat.log"
 )
 
 var (
-	daocLogs    DaocLogs
-	chatLogFile string
+	daocLogs DaocLogs
 )
 
 func readChatFile(r fyne.URIReadCloser, err error) {
@@ -34,36 +33,27 @@ func readChatFile(r fyne.URIReadCloser, err error) {
 func main() {
 	daocLogs = DaocLogs{}
 	a := fa.New()
-	w := a.NewWindow("Dark Age of Camelot - Chat Parser - By: Theorist")
+	w := a.NewWindow("Dark Age of Camelot - Chat Parser")
 	damageLabel := widget.NewLabel("")
+	createdBy := widget.NewLabel("Created by Theorist")
 
 	w.SetContent(container.NewVBox(
 		damageLabel,
-		widget.NewButton("Load Chat Log", func() {
-			fd := dialog.NewFileOpen(func(r fyne.URIReadCloser, err error) {
-				chatLogFile = r.URI().Name()
-				fmt.Println(r.URI().Name())
-			}, w)
-			fd.Show()
-		}),
 		widget.NewButton("Refresh", func() {
-			e := os.Remove(chatLogFile)
+			e := os.Remove(FILE_NAME)
 			if e != nil {
 				log.Fatal(e)
 			}
 		}),
+		createdBy,
 	))
 
 	go func() {
-		if chatLogFile != "" {
-			openLogFile(chatLogFile)
-		}
+		openLogFile(FILE_NAME)
 		damageLabel.SetText(daocLogs.writeLogValues())
 		for range time.Tick(time.Second * LOG_STREAM_TIME) {
 			daocLogs = DaocLogs{}
-			if chatLogFile != "" {
-				openLogFile(chatLogFile)
-			}
+			openLogFile(FILE_NAME)
 			damageLabel.SetText(daocLogs.writeLogValues())
 		}
 	}()
