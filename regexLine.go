@@ -223,16 +223,19 @@ func (_daocLogs *DaocLogs) regexEnemy(line string) {
 	}
 	match, _ = regexp.MatchString("hits you for.*damage ", line)
 	if match {
-		damage := strings.Split(line, "for ")[1]
-		damage = strings.Split(damage, " damage")[0]
-		damage = strings.Split(damage, " ")[0]
-		damageInt, _ := strconv.Atoi(damage)
+		match, _ = regexp.MatchString("critically hit", line)
+		if !match {
+			damage := strings.Split(line, "for ")[1]
+			damage = strings.Split(damage, " damage")[0]
+			damage = strings.Split(damage, " ")[0]
+			damageInt, _ := strconv.Atoi(damage)
 
-		user := strings.Split(line, " hita you")[0]
-		user = strings.Split(line, " ")[1]
-		userStats := _daocLogs.findEnemyStats(user)
+			user := strings.Split(line, " hita you")[0]
+			user = strings.Split(line, " ")[1]
+			userStats := _daocLogs.findEnemyStats(user)
 
-		userStats.MovingDamageTotal = append(userStats.MovingDamageTotal, damageInt)
+			userStats.MovingDamageTotal = append(userStats.MovingDamageTotal, damageInt)
+		}
 	}
 	match, _ = regexp.MatchString("hits your.*for ", line)
 	if match {
@@ -281,7 +284,7 @@ func (_daocLogs *DaocLogs) regexEnemy(line string) {
 		damage := strings.Split(line, "for an additional ")[1]
 		damage = strings.Split(damage, " damage")[0]
 		damageInt, _ := strconv.Atoi(damage)
-		user := strings.Split(line, " critically ")[0]
+		user := strings.Split(line, " critically")[0]
 		user = strings.Split(line, " ")[1]
 		playerStats := _daocLogs.findEnemyStats(user)
 		playerStats.MovingDamageTotal = append(playerStats.MovingDamageTotal, damageInt)
