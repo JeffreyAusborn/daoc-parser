@@ -9,7 +9,11 @@ import (
 )
 
 func (_daocLogs *DaocLogs) regexOffensive(line string, style bool) bool {
-	match, _ := regexp.MatchString("You attack.*with your.*and hit for.*damage", line)
+	match, _ := regexp.MatchString("@@", line)
+	if match {
+		return false
+	}
+	match, _ = regexp.MatchString("You attack.*with your.*and hit for.*damage", line)
 	if match {
 		match, _ = regexp.MatchString("critically hit", line)
 		if !match {
@@ -112,7 +116,11 @@ func (_daocLogs *DaocLogs) regexOffensive(line string, style bool) bool {
 }
 
 func (_daocLogs *DaocLogs) regexDefensives(line string) {
-	match, _ := regexp.MatchString("you block", line)
+	match, _ := regexp.MatchString("@@", line)
+	if match {
+		return
+	}
+	match, _ = regexp.MatchString("you block", line)
 	if match {
 		_daocLogs.getUser().BlockTotal += 1
 	}
@@ -138,7 +146,11 @@ func (_daocLogs *DaocLogs) regexDefensives(line string) {
 }
 
 func (_daocLogs *DaocLogs) regexSupport(line string) {
-	match, _ := regexp.MatchString("You heal yourself for", line)
+	match, _ := regexp.MatchString("@@", line)
+	if match {
+		return
+	}
+	match, _ = regexp.MatchString("You heal yourself for", line)
 	if match {
 		healing := strings.Split(line, "You heal yourself for ")[1]
 		healing = strings.Split(healing, " hit points")[0]
@@ -175,7 +187,11 @@ func (_daocLogs *DaocLogs) regexSupport(line string) {
 }
 
 func (_daocLogs *DaocLogs) regexPets(line string) {
-	match, _ := regexp.MatchString("The.*casts a spell!", line)
+	match, _ := regexp.MatchString("@@", line)
+	if match {
+		return
+	}
+	match, _ = regexp.MatchString("The.*casts a spell!", line)
 	if match {
 	}
 	match, _ = regexp.MatchString("Your.*attacks.*and hits for.*damage!", line)
@@ -187,7 +203,11 @@ func (_daocLogs *DaocLogs) regexPets(line string) {
 }
 
 func (_daocLogs *DaocLogs) regexMisc(line string) {
-	match, _ := regexp.MatchString("You gain a total of.*experience points", line)
+	match, _ := regexp.MatchString("@@", line)
+	if match {
+		return
+	}
+	match, _ = regexp.MatchString("You gain a total of.*experience points", line)
 	if match {
 		exp := strings.Split(line, "You gain a total of ")[1]
 		exp = strings.Split(exp, " experience")[0]
@@ -206,7 +226,11 @@ func (_daocLogs *DaocLogs) regexMisc(line string) {
 }
 
 func (_daocLogs *DaocLogs) regexEnemy(line string) {
-	match, _ := regexp.MatchString("parries your attack", line)
+	match, _ := regexp.MatchString("@@", line)
+	if match {
+		return
+	}
+	match, _ = regexp.MatchString("parries your attack", line)
 	if match {
 		user := strings.Split(line, " parries")[0]
 		user = strings.Split(user, " ")[1]
@@ -306,8 +330,12 @@ func (_daocLogs *DaocLogs) regexEnemy(line string) {
 	}
 }
 func (_daocLogs *DaocLogs) regexTime(line string) {
+	match, _ := regexp.MatchString("@@", line)
+	if match {
+		return
+	}
 	if _daocLogs.getUser().StartTime.IsZero() {
-		match, _ := regexp.MatchString("Chat Log Opened", line)
+		match, _ = regexp.MatchString("Chat Log Opened", line)
 		if match {
 			timeObj, err := time.Parse("Mon Jan 02 15:04:05 2006", strings.TrimSuffix(strings.Split(line, ": ")[1], "\r\n"))
 			if err != nil {
@@ -317,7 +345,7 @@ func (_daocLogs *DaocLogs) regexTime(line string) {
 			_daocLogs.getUser().StartTime = timeObj
 		}
 	}
-	match, _ := regexp.MatchString("Chat Log Closed", line)
+	match, _ = regexp.MatchString("Chat Log Closed", line)
 	if match {
 		timeObj, err := time.Parse("Mon Jan 02 15:04:05 2006", strings.TrimSuffix(strings.Split(line, ": ")[1], "\r\n"))
 		if err != nil {
