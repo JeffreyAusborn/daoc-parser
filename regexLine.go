@@ -61,8 +61,8 @@ func (_daocLogs *DaocLogs) regexOffensive(line string, style bool) bool {
 
 			user := strings.Split(line, "You hit ")[1]
 			user = strings.Split(user, " for")[0]
-			_daocLogs.findEnemyStats(user)
-			_daocLogs.getUser().UsersHit = append(_daocLogs.getUser().UsersHit, user)
+			userStats := _daocLogs.findEnemyStats(user)
+			userStats.MovingDamageReceived = append(userStats.MovingDamageReceived, damageInt)
 		}
 	}
 	match, _ = regexp.MatchString("Your.*hits.*for.*damage", line)
@@ -221,6 +221,14 @@ func (_daocLogs *DaocLogs) regexEnemy(line string) {
 		user = strings.Split(user, " ")[1]
 		userStats := _daocLogs.findEnemyStats(user)
 		userStats.BlockTotal += 1
+	}
+
+	match, _ = regexp.MatchString("resists the effect", line)
+	if match {
+		user := strings.Split(line, " resists")[0]
+		user = strings.Split(user, " ")[1]
+		userStats := _daocLogs.findEnemyStats(user)
+		userStats.ResistsInTotal += 1
 	}
 	match, _ = regexp.MatchString("hits you for.*damage ", line)
 	if match {

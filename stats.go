@@ -105,44 +105,19 @@ func (_daocLogs *DaocLogs) calculateDensives() []string {
 	return listItems
 }
 
-func (_daocLogs *DaocLogs) calculateEnemyDensives() []string {
-	listItems := []string{}
-	blocks := 0
-	evades := 0
-	parries := 0
-	for _, user := range _daocLogs.Enemy {
-		blocks += user.BlockTotal
-		evades += user.EvadeTotal
-		parries += user.ParryTotal
-	}
-
-	if blocks+parries+evades > 0 {
-		listItems = append(listItems, "\t\t----- Enemy Defensives -----\n")
-		if blocks > 0 {
-			listItems = append(listItems, fmt.Sprintf("Block: %d\n", blocks))
-		}
-		if parries > 0 {
-			listItems = append(listItems, fmt.Sprintf("Parry: %d\n", parries))
-		}
-		if evades > 0 {
-			listItems = append(listItems, fmt.Sprintf("Evade: %d\n", evades))
-		}
-	}
-	return listItems
-}
-
 func (_daocLogs *DaocLogs) getCombativeUsers() []string {
-	listItems := []string{}
 	users := []string{}
+	users = append(users, "\t\t----- Combatives -----")
 	for _, user := range _daocLogs.Enemy {
-		users = append(users, user.UserName)
+		users = append(users, "\t----- "+user.UserName+" -----")
+		users = append(users, fmt.Sprintf("Damage Taken: %d", sumArr(user.MovingDamageReceived)))
+		users = append(users, fmt.Sprintf("Damage Out: %d", sumArr(user.MovingDamageTotal)))
+		users = append(users, fmt.Sprintf("Blocks: %d", user.BlockTotal))
+		users = append(users, fmt.Sprintf("Evades: %d", user.EvadeTotal))
+		users = append(users, fmt.Sprintf("Parry: %d", user.ParryTotal))
+		users = append(users, fmt.Sprintf("Resisted You: %d", user.ResistsInTotal))
 	}
-
-	if len(users) > 0 {
-		listItems = append(listItems, "\t\t----- Combatives -----")
-		listItems = append(listItems, dedupe(users)...)
-	}
-	return listItems
+	return users
 }
 
 func (_daocLogs *DaocLogs) calculateTime() []string {

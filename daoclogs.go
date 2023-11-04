@@ -80,7 +80,7 @@ func (_daocLogs *DaocLogs) writeLogValues() []string {
 	listItems := []string{}
 	listItems = append(listItems, _daocLogs.calculateArmorhits()...)
 	listItems = append(listItems, _daocLogs.calculateDamageIn()...)
-	listItems = append(listItems, _daocLogs.calculateEnemyDensives()...)
+	// listItems = append(listItems, _daocLogs.calculateEnemyDensives()...)
 	listItems = append(listItems, _daocLogs.calculateDamageOut()...)
 	listItems = append(listItems, _daocLogs.calculateHeal()...)
 	listItems = append(listItems, _daocLogs.calculateDensives()...)
