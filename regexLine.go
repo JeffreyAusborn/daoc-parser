@@ -109,8 +109,12 @@ func (_daocLogs *DaocLogs) regexOffensive(line string, style bool) bool {
 
 		user := strings.Split(line, "hit ")[1]
 		user = strings.Split(user, " for")[0]
-		userStats := _daocLogs.findEnemyStats(user)
-		userStats.MovingDamageReceived = append(userStats.MovingDamageReceived, damageInt)
+		userCheck := strings.Split(user, " ")
+		if len(userCheck) == 0 {
+			userStats := _daocLogs.findEnemyStats(user)
+			userStats.MovingDamageReceived = append(userStats.MovingDamageReceived, damageInt)
+		}
+
 	}
 	return style
 }
