@@ -69,8 +69,9 @@ func main() {
 	myWindow := myApp.NewWindow("Dark Age of Camelot - Chat Parser - Theorist")
 	openLogFile(FILE_NAME)
 	allLogs, _ := renderAll(myWindow)
-	damageInLogs, _ := renderDamageIn(myWindow)
-	damageInOut, _ := renderDamagOut(myWindow)
+	// damageInLogs, _ := renderDamageIn(myWindow)
+	damageArmorLogs, _ := renderArmorDamage(myWindow)
+	damageOutLogs, _ := renderDamagOut(myWindow)
 	healLogs, _ := renderHeals(myWindow)
 	defensiveLogs, _ := renderDefensives(myWindow)
 	combativeLogs, _ := renderCombatives(myWindow)
@@ -86,8 +87,9 @@ func main() {
 
 	tabs := container.NewAppTabs(
 		container.NewTabItem("All", allLogs),
-		container.NewTabItem("Damage Out", damageInOut),
-		container.NewTabItem("Damage In", damageInLogs),
+		container.NewTabItem("Damage Out", damageOutLogs),
+		// container.NewTabItem("Damage In", damageInLogs),
+		container.NewTabItem("Armor Damage", damageArmorLogs),
 		container.NewTabItem("Healing", healLogs),
 		container.NewTabItem("Defensive", defensiveLogs),
 		container.NewTabItem("Combatives", combativeLogs),
@@ -113,7 +115,7 @@ func renderAll(w fyne.Window) (fyne.CanvasObject, error) {
 	l := widget.NewList(func() int {
 		return len(chatLogs)
 	}, func() fyne.CanvasObject {
-		return widget.NewLabel("Combat Logs")
+		return widget.NewLabel("")
 	}, func(lii widget.ListItemID, co fyne.CanvasObject) {
 		if lii >= len(chatLogs) {
 			return
@@ -149,7 +151,7 @@ func renderHeals(w fyne.Window) (fyne.CanvasObject, error) {
 	l := widget.NewList(func() int {
 		return len(chatLogs)
 	}, func() fyne.CanvasObject {
-		return widget.NewLabel("Combat Logs")
+		return widget.NewLabel("")
 	}, func(lii widget.ListItemID, co fyne.CanvasObject) {
 		if lii >= len(chatLogs) {
 			return
@@ -185,7 +187,7 @@ func renderDefensives(w fyne.Window) (fyne.CanvasObject, error) {
 	l := widget.NewList(func() int {
 		return len(chatLogs)
 	}, func() fyne.CanvasObject {
-		return widget.NewLabel("Combat Logs")
+		return widget.NewLabel("")
 	}, func(lii widget.ListItemID, co fyne.CanvasObject) {
 		if lii >= len(chatLogs) {
 			return
@@ -218,11 +220,10 @@ func renderDefensives(w fyne.Window) (fyne.CanvasObject, error) {
 
 func renderDamageIn(w fyne.Window) (fyne.CanvasObject, error) {
 	chatLogs := daocLogs.calculateDamageIn()
-	chatLogs = append(chatLogs, daocLogs.calculateArmorhits()...)
 	l := widget.NewList(func() int {
 		return len(chatLogs)
 	}, func() fyne.CanvasObject {
-		return widget.NewLabel("Combat Logs")
+		return widget.NewLabel("")
 	}, func(lii widget.ListItemID, co fyne.CanvasObject) {
 		if lii >= len(chatLogs) {
 			return
@@ -235,7 +236,42 @@ func renderDamageIn(w fyne.Window) (fyne.CanvasObject, error) {
 		for range time.Tick(time.Second * LOG_STREAM_TIME) {
 			mu.Lock()
 			chatLogs = daocLogs.calculateDamageIn()
-			chatLogs = append(chatLogs, daocLogs.calculateArmorhits()...)
+			l.Refresh()
+			mu.Unlock()
+		}
+	}()
+
+	resetLabel := widget.NewLabel("")
+	resetbtn := widget.NewButton("Reset Logs - Make sure logs are disabled first", func() {
+		e := os.Remove(FILE_NAME)
+		if e != nil {
+			fmt.Println(e)
+		}
+	})
+
+	grid := container.New(layout.NewFormLayout(), resetLabel, resetbtn)
+	tab := container.New(layout.NewBorderLayout(grid, nil, nil, nil), grid, l)
+	return tab, nil
+}
+
+func renderArmorDamage(w fyne.Window) (fyne.CanvasObject, error) {
+	chatLogs := daocLogs.calculateArmorhits()
+	l := widget.NewList(func() int {
+		return len(chatLogs)
+	}, func() fyne.CanvasObject {
+		return widget.NewLabel("")
+	}, func(lii widget.ListItemID, co fyne.CanvasObject) {
+		if lii >= len(chatLogs) {
+			return
+		}
+		val := chatLogs[lii]
+		label := co.(*widget.Label)
+		label.SetText(val)
+	})
+	go func() {
+		for range time.Tick(time.Second * LOG_STREAM_TIME) {
+			mu.Lock()
+			chatLogs = daocLogs.calculateArmorhits()
 			l.Refresh()
 			mu.Unlock()
 		}
@@ -259,7 +295,7 @@ func renderDamagOut(w fyne.Window) (fyne.CanvasObject, error) {
 	l := widget.NewList(func() int {
 		return len(chatLogs)
 	}, func() fyne.CanvasObject {
-		return widget.NewLabel("Combat Logs")
+		return widget.NewLabel("")
 	}, func(lii widget.ListItemID, co fyne.CanvasObject) {
 		if lii >= len(chatLogs) {
 			return
@@ -295,7 +331,7 @@ func renderCombatives(w fyne.Window) (fyne.CanvasObject, error) {
 	l := widget.NewList(func() int {
 		return len(chatLogs)
 	}, func() fyne.CanvasObject {
-		return widget.NewLabel("Combat Logs")
+		return widget.NewLabel("")
 	}, func(lii widget.ListItemID, co fyne.CanvasObject) {
 		if lii >= len(chatLogs) {
 			return

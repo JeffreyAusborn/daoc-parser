@@ -8,6 +8,7 @@ import (
 type DaocLogs struct {
 	User     Stats
 	Enemy    []*Stats
+	Friendly []*Stats
 	Bindings []string
 }
 
@@ -79,7 +80,7 @@ type Stats struct {
 func (_daocLogs *DaocLogs) writeLogValues() []string {
 	listItems := []string{}
 	listItems = append(listItems, _daocLogs.calculateArmorhits()...)
-	listItems = append(listItems, _daocLogs.calculateDamageIn()...)
+	// listItems = append(listItems, _daocLogs.calculateDamageIn()...)
 	// listItems = append(listItems, _daocLogs.calculateEnemyDensives()...)
 	listItems = append(listItems, _daocLogs.calculateDamageOut()...)
 	listItems = append(listItems, _daocLogs.calculateHeal()...)
@@ -100,13 +101,27 @@ func (_daocLogs *DaocLogs) getUser() *Stats {
 }
 
 func (_daocLogs *DaocLogs) findEnemyStats(user string) *Stats {
+	user = strings.TrimSpace(strings.ToLower(user))
 	for _, stats := range _daocLogs.Enemy {
 		if stats.UserName == user {
 			return stats
 		}
 	}
 	newUser := Stats{}
-	newUser.UserName = strings.ToLower(user)
+	newUser.UserName = user
 	_daocLogs.Enemy = append(_daocLogs.Enemy, &newUser)
+	return &newUser
+}
+
+func (_daocLogs *DaocLogs) findFriendlyStats(user string) *Stats {
+	user = strings.TrimSpace(strings.ToLower(user))
+	for _, stats := range _daocLogs.Friendly {
+		if stats.UserName == user {
+			return stats
+		}
+	}
+	newUser := Stats{}
+	newUser.UserName = user
+	_daocLogs.Friendly = append(_daocLogs.Friendly, &newUser)
 	return &newUser
 }

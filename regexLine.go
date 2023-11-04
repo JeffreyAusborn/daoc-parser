@@ -151,6 +151,11 @@ func (_daocLogs *DaocLogs) regexSupport(line string) {
 		healing = strings.Split(healing, " hit points")[0]
 		healingInt, _ := strconv.Atoi(healing)
 		_daocLogs.getUser().TotalHeals = append(_daocLogs.getUser().TotalHeals, healingInt)
+
+		user := strings.Split(line, "heal ")[1]
+		user = strings.Split(user, " for")[0]
+		userStats := _daocLogs.findFriendlyStats(user)
+		userStats.TotalHeals = append(userStats.TotalHeals, healingInt)
 	}
 	match, _ = regexp.MatchString("heal criticals", line)
 	if match {

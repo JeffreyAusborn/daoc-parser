@@ -22,7 +22,6 @@ Parsing Dark Age of Camelot chat.log file in order to provide user and enemy bas
 
 # TODO Features
 - Create more regex stats
-    - Heals
     - Pets
     - PvE?
 - Create rates on the values

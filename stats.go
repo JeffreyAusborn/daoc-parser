@@ -38,23 +38,23 @@ func (_daocLogs *DaocLogs) calculateDamageOut() []string {
 
 func (_daocLogs *DaocLogs) calculateDamageIn() []string {
 	listItems := []string{}
-	totalAllDamage := []int{}
+	totalAllDamage := 0
 
 	for _, user := range _daocLogs.Enemy {
-		totalAllDamage = append(totalAllDamage, user.MovingDamageTotal...)
+		totalAllDamage += sumArr(user.MovingDamageTotal)
+	}
+	if totalAllDamage > 0 {
+		listItems = append(listItems, "\t\t----- Damage In -----\n")
+		listItems = append(listItems, fmt.Sprintf("Total Damage: %d\n", totalAllDamage))
+		for _, user := range _daocLogs.Enemy {
+			listItems = append(listItems, fmt.Sprintf("\t----- %s -----", user.UserName))
+			listItems = append(listItems, fmt.Sprintf("Hits: %d", len(user.MovingDamageTotal)))
+			listItems = append(listItems, fmt.Sprintf("Damage: %d\n", sumArr(user.MovingDamageTotal)))
+		}
 	}
 
-	totalDamage := sumArr(totalAllDamage)
-
-	if totalDamage > 0 {
-		listItems = append(listItems, "\t\t----- Damage In -----\n")
-		if totalDamage > 0 {
-			listItems = append(listItems, fmt.Sprintf("Hits: %d", len(totalAllDamage)))
-			listItems = append(listItems, fmt.Sprintf("Damage: %d\n", totalDamage))
-		}
-		if _daocLogs.getUser().TotalDeaths > 0 {
-			listItems = append(listItems, fmt.Sprintf("Deaths: %d\n", daocLogs.getUser().TotalDeaths))
-		}
+	if _daocLogs.getUser().TotalDeaths > 0 {
+		listItems = append(listItems, fmt.Sprintf("Deaths: %d\n", daocLogs.getUser().TotalDeaths))
 	}
 	return listItems
 }
@@ -62,22 +62,47 @@ func (_daocLogs *DaocLogs) calculateDamageIn() []string {
 func (_daocLogs *DaocLogs) calculateHeal() []string {
 	listItems := []string{}
 	if len(_daocLogs.User.TotalSelfHeal)+len(_daocLogs.User.TotalAbsorbed)+len(_daocLogs.User.TotalHeals) > 0 {
-		listItems = append(listItems, "\t\t----- Healing & Absorb -----\n")
-		if len(_daocLogs.User.TotalSelfHeal) > 0 {
-			listItems = append(listItems, fmt.Sprintf("Self Heals: %d\n", sumArr(_daocLogs.User.TotalSelfHeal)))
-		}
+		listItems = append(listItems, "\t\t----- Healing & Self Absorb -----\n")
 		if len(_daocLogs.User.TotalHeals) > 0 {
+			listItems = append(listItems, "\t----- Total Heals -----\n")
+			min, max := getMinAndMax(_daocLogs.User.TotalHeals)
 			listItems = append(listItems, fmt.Sprintf("All Heals: %d\n", sumArr(_daocLogs.User.TotalHeals)))
-		}
-		if len(_daocLogs.User.TotalHealsCrits) > 0 {
-			listItems = append(listItems, fmt.Sprintf("Heal Crits: %d\n", sumArr(_daocLogs.User.TotalHealsCrits)))
-		}
-		if len(_daocLogs.User.TotalAbsorbed) > 0 {
-			listItems = append(listItems, fmt.Sprintf("Absorbed: %d\n", sumArr(_daocLogs.User.TotalAbsorbed)))
+			listItems = append(listItems, fmt.Sprintf("Minimum Heals: %d\n", min))
+			listItems = append(listItems, fmt.Sprintf("Maximum Heals: %d\n", max))
+			listItems = append(listItems, fmt.Sprintf("Average Heals: %d\n", sumArr(_daocLogs.User.TotalHeals)/len(_daocLogs.User.TotalHeals)))
 		}
 		if _daocLogs.User.OverHeals > 0 {
 			listItems = append(listItems, fmt.Sprintf("OverHeal Count: %d\n", _daocLogs.User.OverHeals))
 		}
+		if len(_daocLogs.User.TotalSelfHeal) > 0 {
+			min, max := getMinAndMax(_daocLogs.User.TotalSelfHeal)
+			listItems = append(listItems, "\t----- Self Heals -----\n")
+			listItems = append(listItems, fmt.Sprintf("Total Self Heals: %d\n", sumArr(_daocLogs.User.TotalSelfHeal)))
+			listItems = append(listItems, fmt.Sprintf("Minimum Self Heals: %d\n", min))
+			listItems = append(listItems, fmt.Sprintf("Maximum Self Heals: %d\n", max))
+			listItems = append(listItems, fmt.Sprintf("Average Self Heals: %d\n", sumArr(_daocLogs.User.TotalSelfHeal)/len(_daocLogs.User.TotalSelfHeal)))
+		}
+		if len(_daocLogs.User.TotalHealsCrits) > 0 {
+			listItems = append(listItems, "\t----- Crit Heals -----\n")
+			min, max := getMinAndMax(_daocLogs.User.TotalHealsCrits)
+			listItems = append(listItems, fmt.Sprintf("Heal Crits: %d\n", sumArr(_daocLogs.User.TotalHealsCrits)))
+			listItems = append(listItems, fmt.Sprintf("Minimum Crit Heals: %d\n", min))
+			listItems = append(listItems, fmt.Sprintf("Maximum Crit Heals: %d\n", max))
+			listItems = append(listItems, fmt.Sprintf("Average Crit Heals: %d\n", sumArr(_daocLogs.User.TotalHealsCrits)/len(_daocLogs.User.TotalHealsCrits)))
+		}
+		if len(_daocLogs.User.TotalAbsorbed) > 0 {
+			listItems = append(listItems, "\t----- Absorbs -----\n")
+			min, max := getMinAndMax(_daocLogs.User.TotalAbsorbed)
+			listItems = append(listItems, fmt.Sprintf("Absorbed: %d\n", sumArr(_daocLogs.User.TotalAbsorbed)))
+			listItems = append(listItems, fmt.Sprintf("Minimum Absorbed: %d\n", min))
+			listItems = append(listItems, fmt.Sprintf("Maximum Absorbed: %d\n", max))
+			listItems = append(listItems, fmt.Sprintf("Average Absorbed: %d\n", sumArr(_daocLogs.User.TotalAbsorbed)/len(_daocLogs.User.TotalAbsorbed)))
+		}
+		for _, user := range _daocLogs.Friendly {
+			listItems = append(listItems, fmt.Sprintf("\t----- %s -----", user.UserName))
+			listItems = append(listItems, fmt.Sprintf("Healed: %d\n", sumArr(user.TotalHeals)))
+		}
+
 	}
 	return listItems
 }
@@ -107,10 +132,18 @@ func (_daocLogs *DaocLogs) calculateDensives() []string {
 
 func (_daocLogs *DaocLogs) getCombativeUsers() []string {
 	users := []string{}
+	totalAllDamage := []int{}
+
+	for _, user := range _daocLogs.Enemy {
+		totalAllDamage = append(totalAllDamage, user.MovingDamageTotal...)
+	}
+	users = append(users, "\t\t----- Damage In -----")
+	users = append(users, fmt.Sprintf("Total Damage: %d\n", sumArr(totalAllDamage)))
+	users = append(users, fmt.Sprintf("Total Hits: %d", len(totalAllDamage)))
 	users = append(users, "\t\t----- Combatives -----")
 	for _, user := range _daocLogs.Enemy {
 		users = append(users, "\t----- "+user.UserName+" -----")
-		users = append(users, fmt.Sprintf("Damage Taken: %d", sumArr(user.MovingDamageReceived)))
+		users = append(users, fmt.Sprintf("Damage In: %d", sumArr(user.MovingDamageReceived)))
 		users = append(users, fmt.Sprintf("Damage Out: %d", sumArr(user.MovingDamageTotal)))
 		users = append(users, fmt.Sprintf("Blocks: %d", user.BlockTotal))
 		users = append(users, fmt.Sprintf("Evades: %d", user.EvadeTotal))
