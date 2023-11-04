@@ -68,7 +68,7 @@ func main() {
 	myApp := app.New()
 	myWindow := myApp.NewWindow("Dark Age of Camelot - Chat Parser - Theorist")
 	openLogFile(FILE_NAME)
-	allLogs, _ := renderAll(myWindow)
+	// allLogs, _ := renderAll(myWindow)
 	// damageInLogs, _ := renderDamageIn(myWindow)
 	damageArmorLogs, _ := renderArmorDamage(myWindow)
 	damageOutLogs, _ := renderDamagOut(myWindow)
@@ -86,12 +86,12 @@ func main() {
 	}()
 
 	tabs := container.NewAppTabs(
-		container.NewTabItem("All", allLogs),
+		// container.NewTabItem("All", allLogs),
 		container.NewTabItem("Damage Out", damageOutLogs),
 		// container.NewTabItem("Damage In", damageInLogs),
-		container.NewTabItem("Armor Damage", damageArmorLogs),
 		container.NewTabItem("Healing", healLogs),
 		container.NewTabItem("Defensive", defensiveLogs),
+		container.NewTabItem("Armor Damage", damageArmorLogs),
 		container.NewTabItem("Combatives", combativeLogs),
 	)
 	tabs.SetTabLocation(container.TabLocationTop)
