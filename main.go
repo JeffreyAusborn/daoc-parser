@@ -7,11 +7,6 @@ import (
 	"sync"
 	"time"
 
-	// "fyne.io/fyne"
-	// "fyne.io/fyne/app"
-	// "fyne.io/fyne/container"
-	// "fyne.io/fyne/v2/data/binding"
-	// "fyne.io/fyne/widget"
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/app"
 	"fyne.io/fyne/v2/container"
@@ -97,7 +92,15 @@ func main() {
 	)
 	tabs.SetTabLocation(container.TabLocationTop)
 
+	// resetbtn := widget.NewButton("Reset", func() {
+	// 	e := os.Remove(FILE_NAME)
+	// 	if e != nil {
+	// 		fmt.Println(e)
+	// 	}
+	// })
+
 	myWindow.SetContent(tabs)
+
 	myWindow.CenterOnScreen()
 	myWindow.Resize(fyne.Size{Width: 700, Height: 500})
 	myWindow.ShowAndRun()
@@ -125,7 +128,16 @@ func renderAll(w fyne.Window) (fyne.CanvasObject, error) {
 			mu.Unlock()
 		}
 	}()
-	grid := container.New(layout.NewFormLayout())
+
+	resetLabel := widget.NewLabel("")
+	resetbtn := widget.NewButton("Reset Logs", func() {
+		e := os.Remove(FILE_NAME)
+		if e != nil {
+			fmt.Println(e)
+		}
+	})
+
+	grid := container.New(layout.NewFormLayout(), resetLabel, resetbtn)
 	tab := container.New(layout.NewBorderLayout(grid, nil, nil, nil), grid, l)
 	return tab, nil
 }
@@ -153,7 +165,15 @@ func renderHeals(w fyne.Window) (fyne.CanvasObject, error) {
 		}
 	}()
 
-	grid := container.New(layout.NewFormLayout())
+	resetLabel := widget.NewLabel("")
+	resetbtn := widget.NewButton("Reset Logs", func() {
+		e := os.Remove(FILE_NAME)
+		if e != nil {
+			fmt.Println(e)
+		}
+	})
+
+	grid := container.New(layout.NewFormLayout(), resetLabel, resetbtn)
 	tab := container.New(layout.NewBorderLayout(grid, nil, nil, nil), grid, l)
 	return tab, nil
 }
@@ -181,7 +201,15 @@ func renderDamageIn(w fyne.Window) (fyne.CanvasObject, error) {
 		}
 	}()
 
-	grid := container.New(layout.NewFormLayout())
+	resetLabel := widget.NewLabel("")
+	resetbtn := widget.NewButton("Reset Logs", func() {
+		e := os.Remove(FILE_NAME)
+		if e != nil {
+			fmt.Println(e)
+		}
+	})
+
+	grid := container.New(layout.NewFormLayout(), resetLabel, resetbtn)
 	tab := container.New(layout.NewBorderLayout(grid, nil, nil, nil), grid, l)
 	return tab, nil
 }
@@ -209,7 +237,15 @@ func renderDamagOut(w fyne.Window) (fyne.CanvasObject, error) {
 		}
 	}()
 
-	grid := container.New(layout.NewFormLayout())
+	resetLabel := widget.NewLabel("")
+	resetbtn := widget.NewButton("Reset Logs", func() {
+		e := os.Remove(FILE_NAME)
+		if e != nil {
+			fmt.Println(e)
+		}
+	})
+
+	grid := container.New(layout.NewFormLayout(), resetLabel, resetbtn)
 	tab := container.New(layout.NewBorderLayout(grid, nil, nil, nil), grid, l)
 	return tab, nil
 }
@@ -237,7 +273,15 @@ func renderCombatives(w fyne.Window) (fyne.CanvasObject, error) {
 		}
 	}()
 
-	grid := container.New(layout.NewFormLayout())
+	resetLabel := widget.NewLabel("")
+	resetbtn := widget.NewButton("Reset Logs", func() {
+		e := os.Remove(FILE_NAME)
+		if e != nil {
+			fmt.Println(e)
+		}
+	})
+
+	grid := container.New(layout.NewFormLayout(), resetLabel, resetbtn)
 	tab := container.New(layout.NewBorderLayout(grid, nil, nil, nil), grid, l)
 	return tab, nil
 }
