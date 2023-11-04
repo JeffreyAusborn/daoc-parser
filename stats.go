@@ -162,6 +162,16 @@ func (_daocLogs *DaocLogs) calculateTime() []string {
 	return listItems
 }
 
+func (_daocLogs *DaocLogs) getKills() []string {
+	listItems := []string{}
+	for _, user := range _daocLogs.Enemy {
+		if user.TotalDeaths > 0 {
+			listItems = append(listItems, fmt.Sprintf("%s: %d", user.UserName, user.TotalDeaths))
+		}
+	}
+	return listItems
+}
+
 func (_daocLogs *DaocLogs) calculateArmorhits() []string {
 	listItems := []string{}
 	head := []int{}

@@ -45,10 +45,12 @@ type Stats struct {
 	MovingCritDamage      []int // crit damage
 	MovingDamageReceived  []int // damage receieved - more so for the enemy player
 
-	UsersHit    []string // who have you hit
-	UsersHealed []string // who have you hit
-	TotalKills  int      // how many kills - pve and pvp
-	TotalDeaths int      // how many times you've died - pve and pvp
+	UsersHit    []string // who you hit
+	UsersHealed []string // who you healed
+	UsersKilled []string // who you killed
+
+	TotalKills  int // how many kills - pve and pvp
+	TotalDeaths int // how many times you've died - pve and pvp
 
 	ExperienceGained []int // experience gain
 

@@ -69,7 +69,7 @@ func main() {
 	myWindow := myApp.NewWindow("Dark Age of Camelot - Chat Parser - Theorist")
 	openLogFile(FILE_NAME)
 	// allLogs, _ := renderAll(myWindow)
-	// damageInLogs, _ := renderDamageIn(myWindow)
+	killLog, _ := renderKills(myWindow)
 	damageArmorLogs, _ := renderArmorDamage(myWindow)
 	damageOutLogs, _ := renderDamagOut(myWindow)
 	healLogs, _ := renderHeals(myWindow)
@@ -87,12 +87,12 @@ func main() {
 
 	tabs := container.NewAppTabs(
 		// container.NewTabItem("All", allLogs),
-		container.NewTabItem("Damage Out", damageOutLogs),
-		// container.NewTabItem("Damage In", damageInLogs),
+		container.NewTabItem("Damage", damageOutLogs),
 		container.NewTabItem("Healing", healLogs),
 		container.NewTabItem("Defensive", defensiveLogs),
-		container.NewTabItem("Armor Damage", damageArmorLogs),
-		container.NewTabItem("Combatives", combativeLogs),
+		container.NewTabItem("Armor Damaged", damageArmorLogs),
+		container.NewTabItem("Enemy", combativeLogs),
+		container.NewTabItem("Kills", killLog),
 	)
 	tabs.SetTabLocation(container.TabLocationTop)
 
@@ -134,7 +134,7 @@ func renderAll(w fyne.Window) (fyne.CanvasObject, error) {
 	}()
 
 	resetLabel := widget.NewLabel("")
-	resetbtn := widget.NewButton("Reset Logs - Make sure logs are disabled first", func() {
+	resetbtn := widget.NewButton("Reset Logs - This will delete your log file.", func() {
 		e := os.Remove(FILE_NAME)
 		if e != nil {
 			fmt.Println(e)
@@ -170,7 +170,7 @@ func renderHeals(w fyne.Window) (fyne.CanvasObject, error) {
 	}()
 
 	resetLabel := widget.NewLabel("")
-	resetbtn := widget.NewButton("Reset Logs - Make sure logs are disabled first", func() {
+	resetbtn := widget.NewButton("Reset Logs - This will delete your log file.", func() {
 		e := os.Remove(FILE_NAME)
 		if e != nil {
 			fmt.Println(e)
@@ -206,7 +206,7 @@ func renderDefensives(w fyne.Window) (fyne.CanvasObject, error) {
 	}()
 
 	resetLabel := widget.NewLabel("")
-	resetbtn := widget.NewButton("Reset Logs - Make sure logs are disabled first", func() {
+	resetbtn := widget.NewButton("Reset Logs - This will delete your log file.", func() {
 		e := os.Remove(FILE_NAME)
 		if e != nil {
 			fmt.Println(e)
@@ -218,8 +218,8 @@ func renderDefensives(w fyne.Window) (fyne.CanvasObject, error) {
 	return tab, nil
 }
 
-func renderDamageIn(w fyne.Window) (fyne.CanvasObject, error) {
-	chatLogs := daocLogs.calculateDamageIn()
+func renderKills(w fyne.Window) (fyne.CanvasObject, error) {
+	chatLogs := daocLogs.getKills()
 	l := widget.NewList(func() int {
 		return len(chatLogs)
 	}, func() fyne.CanvasObject {
@@ -235,14 +235,14 @@ func renderDamageIn(w fyne.Window) (fyne.CanvasObject, error) {
 	go func() {
 		for range time.Tick(time.Second * LOG_STREAM_TIME) {
 			mu.Lock()
-			chatLogs = daocLogs.calculateDamageIn()
+			chatLogs = daocLogs.getKills()
 			l.Refresh()
 			mu.Unlock()
 		}
 	}()
 
 	resetLabel := widget.NewLabel("")
-	resetbtn := widget.NewButton("Reset Logs - Make sure logs are disabled first", func() {
+	resetbtn := widget.NewButton("Reset Logs - This will delete your log file.", func() {
 		e := os.Remove(FILE_NAME)
 		if e != nil {
 			fmt.Println(e)
@@ -278,7 +278,7 @@ func renderArmorDamage(w fyne.Window) (fyne.CanvasObject, error) {
 	}()
 
 	resetLabel := widget.NewLabel("")
-	resetbtn := widget.NewButton("Reset Logs - Make sure logs are disabled first", func() {
+	resetbtn := widget.NewButton("Reset Logs - This will delete your log file.", func() {
 		e := os.Remove(FILE_NAME)
 		if e != nil {
 			fmt.Println(e)
@@ -314,7 +314,7 @@ func renderDamagOut(w fyne.Window) (fyne.CanvasObject, error) {
 	}()
 
 	resetLabel := widget.NewLabel("")
-	resetbtn := widget.NewButton("Reset Logs - Make sure logs are disabled first", func() {
+	resetbtn := widget.NewButton("Reset Logs - This will delete your log file.", func() {
 		e := os.Remove(FILE_NAME)
 		if e != nil {
 			fmt.Println(e)
@@ -349,7 +349,7 @@ func renderCombatives(w fyne.Window) (fyne.CanvasObject, error) {
 		}
 	}()
 
-	resetbtn := widget.NewButton("Reset Logs - Make sure logs are disabled first", func() {
+	resetbtn := widget.NewButton("Reset Logs - This will delete your log file.", func() {
 		e := os.Remove(FILE_NAME)
 		if e != nil {
 			fmt.Println(e)
