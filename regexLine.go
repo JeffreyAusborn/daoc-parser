@@ -38,7 +38,7 @@ func (_daocLogs *DaocLogs) regexOffensive(line string, style bool) bool {
 			weaponName := strings.Split(line, "with your ")[1]
 			weaponName = strings.Split(weaponName, " and hit")[0]
 			if style {
-				styleStats := _daocLogs.findSpellStats(styleName)
+				styleStats := _daocLogs.findStyleStats(styleName)
 				styleStats.Damage = append(styleStats.Damage, damageInt)
 			}
 		}
