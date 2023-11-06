@@ -36,16 +36,19 @@ func (_daocLogs *DaocLogs) calculateDamageOut() []string {
 		if len(_daocLogs.getUser().Styles) > 0 {
 			listItems = append(listItems, "\t\t----- Styles -----")
 			for _, style := range _daocLogs.getUser().Styles {
-				minG, maxG := getMinAndMax(style.GrowtRate)
+
 				minD, maxD := getMinAndMax(style.Output)
 				listItems = append(listItems, fmt.Sprintf("\t----- %s -----", style.Name))
 				listItems = append(listItems, fmt.Sprintf("Damage: %d\n", sumArr(style.Output)))
 				listItems = append(listItems, fmt.Sprintf("Damage Min: %d\n", minD))
 				listItems = append(listItems, fmt.Sprintf("Damage Max: %d\n", maxD))
 				listItems = append(listItems, fmt.Sprintf("Damage Average: %d\n", sumArr(style.Output)/len(style.Output)))
-				listItems = append(listItems, fmt.Sprintf("Growth Rate Min: %d\n", minG))
-				listItems = append(listItems, fmt.Sprintf("Growth Rate Max: %d\n", maxG))
-				listItems = append(listItems, fmt.Sprintf("Growth Rate Average: %d\n", sumArr(style.GrowtRate)/len(style.GrowtRate)))
+				if len(style.GrowtRate) > 0 {
+					minG, maxG := getMinAndMax(style.GrowtRate)
+					listItems = append(listItems, fmt.Sprintf("Growth Rate Min: %d\n", minG))
+					listItems = append(listItems, fmt.Sprintf("Growth Rate Max: %d\n", maxG))
+					listItems = append(listItems, fmt.Sprintf("Growth Rate Average: %d\n", sumArr(style.GrowtRate)/len(style.GrowtRate)))
+				}
 			}
 		}
 
