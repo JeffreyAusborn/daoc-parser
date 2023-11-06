@@ -42,6 +42,10 @@ func openLogFile(logPath string) {
 	}
 }
 
+var (
+	tempLines []string
+)
+
 func iterateLogFile(f *os.File) {
 	reader := bufio.NewReader(f)
 	style := false
@@ -50,6 +54,18 @@ func iterateLogFile(f *os.File) {
 		if err != nil {
 			break
 		}
+		// [1,2,3,4,5] -> [2,3,4,5] -> [2,3,4,5,6]
+		if len(tempLines) >= 5 {
+			temp := []string{}
+			for idx, line := range tempLines {
+				if idx == 0 {
+					continue
+				}
+				temp = append(temp, line)
+			}
+			tempLines = temp
+		}
+		tempLines = append(tempLines, line)
 		style = daocLogs.regexOffensive(line, style)
 		daocLogs.regexDefensives(line)
 		daocLogs.regexSupport(line)

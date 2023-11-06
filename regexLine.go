@@ -8,10 +8,28 @@ import (
 	"time"
 )
 
+/*
+	You cast
+	You hit
+
+	You attack
+	You hit
+*/
+
 var (
 	styleName string
 	growthInt int
 )
+
+func checkTempLines(reg string) bool {
+	for _, line := range tempLines {
+		match, _ := regexp.MatchString(reg, line)
+		if match {
+			return true
+		}
+	}
+	return false
+}
 
 func (_daocLogs *DaocLogs) regexOffensive(line string, style bool) bool {
 	match, _ := regexp.MatchString("@@", line)
@@ -45,6 +63,9 @@ func (_daocLogs *DaocLogs) regexOffensive(line string, style bool) bool {
 				styleStats.Damage = append(styleStats.Damage, damageInt)
 				styleStats.GrowtRate = append(styleStats.GrowtRate, growthInt)
 				style = false
+			} else {
+				styleStats := _daocLogs.findStyleStats("base")
+				styleStats.Damage = append(styleStats.Damage, damageInt)
 			}
 		}
 	}
