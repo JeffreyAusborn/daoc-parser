@@ -52,7 +52,9 @@ type Stats struct {
 	TotalKills  int // how many kills - pve and pvp
 	TotalDeaths int // how many times you've died - pve and pvp
 
-	Spells []*Spell
+	Spells []*Ability
+	Heals  []*Ability
+	Styles []*Ability
 
 	ExperienceGained []int // experience gain
 
@@ -77,7 +79,7 @@ type Stats struct {
 	EndTime   time.Time // Last known occurance of chat log closed
 }
 
-type Spell struct {
+type Ability struct {
 	Name   string
 	Damage []int
 }
@@ -122,17 +124,43 @@ func (_daocLogs *DaocLogs) findEnemyStats(user string) *Stats {
 	return &newUser
 }
 
-func (_daocLogs *DaocLogs) findSpellStats(spell string) *Spell {
-	spell = strings.TrimSpace(strings.ToLower(spell))
+func (_daocLogs *DaocLogs) findSpellStats(ability string) *Ability {
+	ability = strings.TrimSpace(strings.ToLower(ability))
 	for _, stats := range _daocLogs.User.Spells {
-		if stats.Name == spell {
+		if stats.Name == ability {
 			return stats
 		}
 	}
-	newSpell := Spell{}
-	newSpell.Name = spell
-	_daocLogs.getUser().Spells = append(_daocLogs.getUser().Spells, &newSpell)
-	return &newSpell
+	newAbility := Ability{}
+	newAbility.Name = ability
+	_daocLogs.getUser().Spells = append(_daocLogs.getUser().Spells, &newAbility)
+	return &newAbility
+}
+
+func (_daocLogs *DaocLogs) findStyleStats(ability string) *Ability {
+	ability = strings.TrimSpace(strings.ToLower(ability))
+	for _, stats := range _daocLogs.User.Styles {
+		if stats.Name == ability {
+			return stats
+		}
+	}
+	newAbility := Ability{}
+	newAbility.Name = ability
+	_daocLogs.getUser().Styles = append(_daocLogs.getUser().Styles, &newAbility)
+	return &newAbility
+}
+
+func (_daocLogs *DaocLogs) findHealStats(ability string) *Ability {
+	ability = strings.TrimSpace(strings.ToLower(ability))
+	for _, stats := range _daocLogs.User.Heals {
+		if stats.Name == ability {
+			return stats
+		}
+	}
+	newAbility := Ability{}
+	newAbility.Name = ability
+	_daocLogs.getUser().Heals = append(_daocLogs.getUser().Heals, &newAbility)
+	return &newAbility
 }
 
 func (_daocLogs *DaocLogs) findFriendlyStats(user string) *Stats {
