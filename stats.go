@@ -92,7 +92,7 @@ func (_daocLogs *DaocLogs) calculateHeal() []string {
 		listItems = append(listItems, "\t\t----- Healing & Self Absorb -----\n")
 		if len(_daocLogs.User.TotalHeals) > 0 {
 			listItems = append(listItems, "\t----- Total Heals -----\n")
-			min, max := getMinAndMax(_daocLogs.User.TotalHeals)
+			min, max := getMinAndMax(_daocLogs.getUser().TotalHeals)
 			listItems = append(listItems, fmt.Sprintf("All Heals: %d\n", sumArr(_daocLogs.User.TotalHeals)))
 			listItems = append(listItems, fmt.Sprintf("Minimum Heals: %d\n", min))
 			listItems = append(listItems, fmt.Sprintf("Maximum Heals: %d\n", max))

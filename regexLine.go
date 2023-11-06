@@ -74,10 +74,12 @@ func (_daocLogs *DaocLogs) regexOffensive(line string, style bool) bool {
 		style = true
 		styleName = strings.Split(line, "perform your ")[1]
 		styleName = strings.Split(styleName, " perfectly")[0]
-
-		growthRate := strings.Split(line, ", Growth")[0]
-		growthRate = strings.Split(growthRate, "+")[1]
-		growthInt, _ = strconv.Atoi(growthRate)
+		match, _ = regexp.MatchString("Growth", line)
+		if match {
+			growthRate := strings.Split(line, ", Growth")[0]
+			growthRate = strings.Split(growthRate, "+")[1]
+			growthInt, _ = strconv.Atoi(growthRate)
+		}
 	}
 	match, _ = regexp.MatchString("You cast a ", line)
 	if match {
@@ -232,6 +234,18 @@ func (_daocLogs *DaocLogs) regexSupport(line string) {
 		healingInt, _ := strconv.Atoi(healing)
 		_daocLogs.getUser().TotalSelfHeal = append(_daocLogs.getUser().TotalSelfHeal, healingInt)
 		_daocLogs.getUser().TotalHeals = append(_daocLogs.getUser().TotalHeals, healingInt)
+	}
+	match, _ = regexp.MatchString("You heal.*for.*hit points", line)
+	if match {
+		healing := strings.Split(line, "for ")[1]
+		healing = strings.Split(healing, " hit points")[0]
+		healingInt, _ := strconv.Atoi(healing)
+		_daocLogs.getUser().TotalHeals = append(_daocLogs.getUser().TotalHeals, healingInt)
+		_daocLogs.getUser().TotalHeals = append(_daocLogs.getUser().TotalHeals, healingInt)
+		user := strings.Split(line, " for")[0]
+		user = strings.Split(user, "heal ")[1]
+		userStats := _daocLogs.findFriendlyStats(user)
+		userStats.TotalHeals = append(userStats.TotalHeals, healingInt)
 	}
 	match, _ = regexp.MatchString("You transfer.*hit points", line)
 	if match {
