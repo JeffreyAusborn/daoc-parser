@@ -52,7 +52,7 @@ type Stats struct {
 	TotalKills  int // how many kills - pve and pvp
 	TotalDeaths int // how many times you've died - pve and pvp
 
-	Spells []*Ability
+	Spells []*Ability // This will only work if the ability with damage exist, like it does for dots and pets
 	Heals  []*Ability
 	Styles []*Ability
 

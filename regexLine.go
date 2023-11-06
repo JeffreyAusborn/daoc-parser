@@ -9,6 +9,7 @@ import (
 )
 
 func (_daocLogs *DaocLogs) regexOffensive(line string, style bool) bool {
+	styleName := ""
 	match, _ := regexp.MatchString("@@", line)
 	if match {
 		return false
@@ -33,11 +34,20 @@ func (_daocLogs *DaocLogs) regexOffensive(line string, style bool) bool {
 			user = strings.Split(user, " with your")[0]
 			userStats := _daocLogs.findEnemyStats(user)
 			userStats.MovingDamageReceived = append(userStats.MovingDamageReceived, damageInt)
+
+			weaponName := strings.Split(line, "with your ")[1]
+			weaponName = strings.Split(weaponName, " and hit")[0]
+			if style {
+				styleStats := _daocLogs.findSpellStats(styleName)
+				styleStats.Damage = append(styleStats.Damage, damageInt)
+			}
 		}
 	}
-	match, _ = regexp.MatchString("You prepare to perform", line)
+	match, _ = regexp.MatchString("You perform your.*perfectly", line)
 	if match {
 		style = true
+		styleName = strings.Split(line, "perform your ")[1]
+		styleName = strings.Split(line, " perfectly")[0]
 	}
 	match, _ = regexp.MatchString("You cast a ", line)
 	if match {
@@ -91,7 +101,7 @@ func (_daocLogs *DaocLogs) regexOffensive(line string, style bool) bool {
 		_daocLogs.getUser().MovingDamageTotal = append(_daocLogs.getUser().MovingDamageTotal, damageInt)
 
 		spellName := strings.Split(line, "Your ")[1]
-		user := "" //strings.Split(line, "hits ")[1]
+		user := ""
 
 		match, _ = regexp.MatchString("attacks", line)
 		if match {
