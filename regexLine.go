@@ -286,6 +286,13 @@ func (_daocLogs *DaocLogs) regexEnemy(line string) {
 		userStats := _daocLogs.findEnemyStats(user)
 		userStats.ResistsInTotal += 1
 	}
+	match, _ = regexp.MatchString("resists your.*effect", line)
+	if match {
+		user := strings.Split(line, " resists")[0]
+		user = strings.Split(user, "] ")[1]
+		userStats := _daocLogs.findEnemyStats(user)
+		userStats.ResistsInTotal += 1
+	}
 	match, _ = regexp.MatchString("hits you for.*damage ", line)
 	if match {
 		match, _ = regexp.MatchString("critically hit", line)
