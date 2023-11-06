@@ -80,8 +80,9 @@ type Stats struct {
 }
 
 type Ability struct {
-	Name   string
-	Damage []int
+	Name      string
+	Damage    []int
+	GrowtRate []int
 }
 
 /*

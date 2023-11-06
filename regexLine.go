@@ -8,8 +8,12 @@ import (
 	"time"
 )
 
+var (
+	styleName string
+	growthInt int
+)
+
 func (_daocLogs *DaocLogs) regexOffensive(line string, style bool) bool {
-	styleName := ""
 	match, _ := regexp.MatchString("@@", line)
 	if match {
 		return false
@@ -24,7 +28,6 @@ func (_daocLogs *DaocLogs) regexOffensive(line string, style bool) bool {
 			damageInt, _ := strconv.Atoi(damage)
 			_daocLogs.getUser().MovingDamageTotal = append(_daocLogs.getUser().MovingDamageTotal, damageInt)
 			if style {
-				style = false
 				_daocLogs.getUser().MovingDamageStyles = append(_daocLogs.getUser().MovingDamageStyles, damageInt)
 			} else {
 				_daocLogs.getUser().MovingDamageBaseMelee = append(_daocLogs.getUser().MovingDamageBaseMelee, damageInt)
@@ -40,6 +43,8 @@ func (_daocLogs *DaocLogs) regexOffensive(line string, style bool) bool {
 			if style {
 				styleStats := _daocLogs.findStyleStats(styleName)
 				styleStats.Damage = append(styleStats.Damage, damageInt)
+				styleStats.GrowtRate = append(styleStats.GrowtRate, growthInt)
+				style = false
 			}
 		}
 	}
@@ -47,7 +52,11 @@ func (_daocLogs *DaocLogs) regexOffensive(line string, style bool) bool {
 	if match {
 		style = true
 		styleName = strings.Split(line, "perform your ")[1]
-		styleName = strings.Split(line, " perfectly")[0]
+		styleName = strings.Split(styleName, " perfectly")[0]
+
+		growthRate := strings.Split(line, ", Growth")[0]
+		growthRate = strings.Split(growthRate, "+")[1]
+		growthInt, _ = strconv.Atoi(growthRate)
 	}
 	match, _ = regexp.MatchString("You cast a ", line)
 	if match {
