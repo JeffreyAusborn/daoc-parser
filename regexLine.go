@@ -72,10 +72,21 @@ func (_daocLogs *DaocLogs) regexOffensive(line string, style bool) bool {
 	// dots and pets (theur) have similar text, need to phase out pet ones
 	match, _ = regexp.MatchString("Your.*hits.*for.*damage", line)
 	if match {
-		damage := strings.Split(line, " for ")[1]
-		damage = strings.Split(damage, " damage")[0]
-		damage = strings.Split(damage, " ")[0]
-		damageInt, _ := strconv.Atoi(damage)
+		damage := ""
+		damageInt := 0
+
+		match, _ = regexp.MatchString("critically hits", line)
+		if match {
+			damage = strings.Split(line, "additional ")[1]
+			damage = strings.Split(damage, " damage")[0]
+			damage = strings.Split(damage, " ")[0]
+			damageInt, _ = strconv.Atoi(damage)
+		} else {
+			damage = strings.Split(line, " for ")[1]
+			damage = strings.Split(damage, " damage")[0]
+			damage = strings.Split(damage, " ")[0]
+			damageInt, _ = strconv.Atoi(damage)
+		}
 		_daocLogs.getUser().MovingDamageSpells = append(_daocLogs.getUser().MovingDamageSpells, damageInt)
 		_daocLogs.getUser().MovingDamageTotal = append(_daocLogs.getUser().MovingDamageTotal, damageInt)
 
@@ -96,8 +107,12 @@ func (_daocLogs *DaocLogs) regexOffensive(line string, style bool) bool {
 		spellStats := _daocLogs.findSpellStats(spellName)
 		spellStats.Damage = append(spellStats.Damage, damageInt)
 
-		userStats := _daocLogs.findEnemyStats(user)
-		userStats.MovingDamageReceived = append(userStats.MovingDamageReceived, damageInt)
+		match, _ = regexp.MatchString("critically hits", line)
+		// Zombie servant crit doesn't have user name - will need to keep an eye on this for other pet crits
+		if !match {
+			userStats := _daocLogs.findEnemyStats(user)
+			userStats.MovingDamageReceived = append(userStats.MovingDamageReceived, damageInt)
+		}
 	}
 	match, _ = regexp.MatchString("You miss!.*", line)
 	if match {

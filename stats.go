@@ -34,7 +34,7 @@ func (_daocLogs *DaocLogs) calculateDamageOut() []string {
 		}
 
 		if len(_daocLogs.getUser().Spells) > 0 {
-			listItems = append(listItems, "\t\t----- Spells -----")
+			listItems = append(listItems, "\t\t----- Pets and Dots -----")
 			for _, spell := range _daocLogs.getUser().Spells {
 				listItems = append(listItems, fmt.Sprintf("\t----- %s -----", spell.Name))
 				listItems = append(listItems, fmt.Sprintf("Damage: %d\n", sumArr(spell.Damage)))
