@@ -160,12 +160,14 @@ func (_daocLogs *DaocLogs) regexSupport(line string) {
 		healing = strings.Split(healing, " hit points")[0]
 		healingInt, _ := strconv.Atoi(healing)
 		_daocLogs.getUser().TotalSelfHeal = append(_daocLogs.getUser().TotalSelfHeal, healingInt)
+		_daocLogs.getUser().TotalHeals = append(_daocLogs.getUser().TotalHeals, healingInt)
 	}
 	match, _ = regexp.MatchString("You transfer.*hit points", line)
 	if match {
 		healing := strings.Split(line, "transfer ")[1]
 		healing = strings.Split(healing, " hit points")[0]
 		healingInt, _ := strconv.Atoi(healing)
+		_daocLogs.getUser().TotalHeals = append(_daocLogs.getUser().TotalHeals, healingInt)
 		_daocLogs.getUser().TotalHeals = append(_daocLogs.getUser().TotalHeals, healingInt)
 
 		user := "unknown"
@@ -178,6 +180,7 @@ func (_daocLogs *DaocLogs) regexSupport(line string) {
 		healing = strings.Split(healing, " amount")[0]
 		healingInt, _ := strconv.Atoi(healing)
 		_daocLogs.getUser().TotalHealsCrits = append(_daocLogs.getUser().TotalHealsCrits, healingInt)
+		_daocLogs.getUser().TotalHeals = append(_daocLogs.getUser().TotalHeals, healingInt)
 	}
 	match, _ = regexp.MatchString("is stunned and cannot move", line)
 	if match {
