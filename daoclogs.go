@@ -52,9 +52,10 @@ type Stats struct {
 	TotalKills  int // how many kills - pve and pvp
 	TotalDeaths int // how many times you've died - pve and pvp
 
-	Spells []*Ability // This will only work if the ability with damage exist, like it does for dots and pets
-	Heals  []*Ability
-	Styles []*Ability
+	Spells    []*Ability // This will only work if the ability with damage exist, like it does for dots and pets
+	DotsNPets []*Ability // This will only work if the ability with damage exist, like it does for dots and pets
+	Heals     []*Ability
+	Styles    []*Ability
 
 	ExperienceGained []int // experience gain
 
@@ -79,10 +80,23 @@ type Stats struct {
 	EndTime   time.Time // Last known occurance of chat log closed
 }
 
+/*
+Breakdown of each ability that we'll aggregate later
+*/
 type Ability struct {
-	Name      string
-	Damage    []int
-	GrowtRate []int
+	Name string
+
+	Output      []int // damage, heals, etc
+	ExtraDamage []int // damage add, procs, style dd, etc
+	Crit        []int // store crit damage, heals
+	GrowtRate   []int
+
+	Resists   int // spell resisted
+	Blocked   int // style/base blocked
+	Parried   int // style/base parried
+	Evaded    int // style/base evades
+	Siphon    int
+	OverHeals int
 }
 
 /*
@@ -127,14 +141,14 @@ func (_daocLogs *DaocLogs) findEnemyStats(user string) *Stats {
 
 func (_daocLogs *DaocLogs) findSpellStats(ability string) *Ability {
 	ability = strings.TrimSpace(strings.ToLower(ability))
-	for _, stats := range _daocLogs.User.Spells {
+	for _, stats := range _daocLogs.User.DotsNPets {
 		if stats.Name == ability {
 			return stats
 		}
 	}
 	newAbility := Ability{}
 	newAbility.Name = ability
-	_daocLogs.getUser().Spells = append(_daocLogs.getUser().Spells, &newAbility)
+	_daocLogs.getUser().DotsNPets = append(_daocLogs.getUser().DotsNPets, &newAbility)
 	return &newAbility
 }
 

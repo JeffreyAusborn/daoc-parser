@@ -60,12 +60,12 @@ func (_daocLogs *DaocLogs) regexOffensive(line string, style bool) bool {
 			weaponName = strings.Split(weaponName, " and hit")[0]
 			if style {
 				styleStats := _daocLogs.findStyleStats(styleName)
-				styleStats.Damage = append(styleStats.Damage, damageInt)
+				styleStats.Output = append(styleStats.Output, damageInt)
 				styleStats.GrowtRate = append(styleStats.GrowtRate, growthInt)
 				style = false
 			} else {
 				styleStats := _daocLogs.findStyleStats("base")
-				styleStats.Damage = append(styleStats.Damage, damageInt)
+				styleStats.Output = append(styleStats.Output, damageInt)
 			}
 		}
 	}
@@ -145,7 +145,7 @@ func (_daocLogs *DaocLogs) regexOffensive(line string, style bool) bool {
 		}
 
 		spellStats := _daocLogs.findSpellStats(spellName)
-		spellStats.Damage = append(spellStats.Damage, damageInt)
+		spellStats.Output = append(spellStats.Output, damageInt)
 
 		match, _ = regexp.MatchString("critically hits", line)
 		// Zombie servant crit doesn't have user name - will need to keep an eye on this for other pet crits
