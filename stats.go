@@ -32,6 +32,14 @@ func (_daocLogs *DaocLogs) calculateDamageOut() []string {
 		if _daocLogs.User.TotalKills > 0 {
 			listItems = append(listItems, fmt.Sprintf("Kills: %d\n", _daocLogs.User.TotalKills))
 		}
+
+		if len(_daocLogs.getUser().Spells) > 0 {
+			listItems = append(listItems, "\t\t----- Spells -----")
+			for _, spell := range _daocLogs.getUser().Spells {
+				listItems = append(listItems, fmt.Sprintf("\t----- %s -----", spell.Name))
+				listItems = append(listItems, fmt.Sprintf("Damage: %d\n", sumArr(spell.Damage)))
+			}
+		}
 	}
 	return listItems
 }

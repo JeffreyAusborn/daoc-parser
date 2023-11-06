@@ -52,6 +52,8 @@ type Stats struct {
 	TotalKills  int // how many kills - pve and pvp
 	TotalDeaths int // how many times you've died - pve and pvp
 
+	Spells []*Spell
+
 	ExperienceGained []int // experience gain
 
 	TotalSelfHeal   []int // self healing
@@ -73,6 +75,11 @@ type Stats struct {
 
 	StartTime time.Time // First occurance of chat log opened
 	EndTime   time.Time // Last known occurance of chat log closed
+}
+
+type Spell struct {
+	Name   string
+	Damage []int
 }
 
 /*
@@ -113,6 +120,19 @@ func (_daocLogs *DaocLogs) findEnemyStats(user string) *Stats {
 	newUser.UserName = user
 	_daocLogs.Enemy = append(_daocLogs.Enemy, &newUser)
 	return &newUser
+}
+
+func (_daocLogs *DaocLogs) findSpellStats(spell string) *Spell {
+	spell = strings.TrimSpace(strings.ToLower(spell))
+	for _, stats := range _daocLogs.User.Spells {
+		if stats.Name == spell {
+			return stats
+		}
+	}
+	newSpell := Spell{}
+	newSpell.Name = spell
+	_daocLogs.getUser().Spells = append(_daocLogs.getUser().Spells, &newSpell)
+	return &newSpell
 }
 
 func (_daocLogs *DaocLogs) findFriendlyStats(user string) *Stats {

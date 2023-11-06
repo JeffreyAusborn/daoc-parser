@@ -69,6 +69,7 @@ func (_daocLogs *DaocLogs) regexOffensive(line string, style bool) bool {
 			userStats.MovingDamageReceived = append(userStats.MovingDamageReceived, damageInt)
 		}
 	}
+	// dots and pets (theur) have similar text, need to phase out pet ones
 	match, _ = regexp.MatchString("Your.*hits.*for.*damage", line)
 	if match {
 		damage := strings.Split(line, " for ")[1]
@@ -78,8 +79,23 @@ func (_daocLogs *DaocLogs) regexOffensive(line string, style bool) bool {
 		_daocLogs.getUser().MovingDamageSpells = append(_daocLogs.getUser().MovingDamageSpells, damageInt)
 		_daocLogs.getUser().MovingDamageTotal = append(_daocLogs.getUser().MovingDamageTotal, damageInt)
 
-		user := strings.Split(line, "hits ")[1]
-		user = strings.Split(user, " for")[0]
+		spellName := strings.Split(line, "Your ")[1]
+		user := "" //strings.Split(line, "hits ")[1]
+
+		match, _ = regexp.MatchString("attacks", line)
+		if match {
+			spellName = strings.Split(spellName, " attacks")[0]
+			user = strings.Split(user, "attacks ")[1]
+			user = strings.Split(user, " and")[0]
+		} else {
+			spellName = strings.Split(spellName, " hits")[0]
+			user = strings.Split(user, "hits ")[1]
+			user = strings.Split(user, " for")[0]
+		}
+
+		spellStats := _daocLogs.findSpellStats(spellName)
+		spellStats.Damage = append(spellStats.Damage, damageInt)
+
 		userStats := _daocLogs.findEnemyStats(user)
 		userStats.MovingDamageReceived = append(userStats.MovingDamageReceived, damageInt)
 	}
