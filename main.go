@@ -17,7 +17,7 @@ import (
 type fn func(int)
 
 const (
-	LOG_STREAM_TIME = 3
+	LOG_STREAM_TIME = 2
 	FILE_NAME       = "chat.log"
 )
 
@@ -34,31 +34,6 @@ func openLogFile() {
 	}
 }
 
-func watchFile() {
-	initialStat, err := os.Stat(FILE_NAME)
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-
-	for {
-		stat, err := os.Stat(FILE_NAME)
-		if err != nil {
-			fmt.Println(err)
-			return
-		}
-
-		if stat.Size() != initialStat.Size() || stat.ModTime() != initialStat.ModTime() {
-			mu.Lock()
-			daocLogs = DaocLogs{}
-			openLogFile()
-			mu.Unlock()
-		}
-
-		time.Sleep(1 * time.Second)
-	}
-}
-
 var (
 	tempLines []string
 )
@@ -71,18 +46,6 @@ func iterateLogFile(f *os.File) {
 		if err != nil {
 			break
 		}
-		// // [1,2,3,4,5] -> [2,3,4,5] -> [2,3,4,5,6]
-		// if len(tempLines) >= 5 {
-		// 	temp := []string{}
-		// 	for idx, line := range tempLines {
-		// 		if idx == 0 {
-		// 			continue
-		// 		}
-		// 		temp = append(temp, line)
-		// 	}
-		// 	tempLines = temp
-		// }
-		// tempLines = append(tempLines, line)
 		daocLogs.regexOffensive(line, style)
 		daocLogs.regexDefensives(line)
 		daocLogs.regexSupport(line)
@@ -91,11 +54,9 @@ func iterateLogFile(f *os.File) {
 		daocLogs.regexEnemy(line)
 		daocLogs.regexTime(line)
 	}
-	// daocLogs.writeLogValues()
 }
 
 // TODO: Remove duplication on each render
-
 func main() {
 	daocLogs = DaocLogs{}
 	myApp := app.New()
@@ -109,7 +70,14 @@ func main() {
 	defensiveLogs, _ := renderDefensives(myWindow)
 	combativeLogs, _ := renderCombatives(myWindow)
 
-	go watchFile()
+	go func() {
+		for range time.Tick(time.Second * LOG_STREAM_TIME) {
+			mu.Lock()
+			daocLogs = DaocLogs{}
+			openLogFile()
+			mu.Unlock()
+		}
+	}()
 
 	tabs := container.NewAppTabs(
 		container.NewTabItem("Spells", spellLogs),
@@ -123,7 +91,6 @@ func main() {
 	tabs.SetTabLocation(container.TabLocationTop)
 
 	myWindow.SetContent(tabs)
-
 	myWindow.CenterOnScreen()
 	myWindow.Resize(fyne.Size{Width: 700, Height: 500})
 	myWindow.ShowAndRun()
@@ -154,7 +121,9 @@ func renderSpells(w fyne.Window) (fyne.CanvasObject, error) {
 
 	resetLabel := widget.NewLabel("")
 	resetbtn := widget.NewButton("Reset Logs - This will delete your log file.", func() {
+		mu.Lock()
 		e := os.Remove(FILE_NAME)
+		mu.Unlock()
 		if e != nil {
 			fmt.Println(e)
 		}
@@ -190,7 +159,9 @@ func renderHeals(w fyne.Window) (fyne.CanvasObject, error) {
 
 	resetLabel := widget.NewLabel("")
 	resetbtn := widget.NewButton("Reset Logs - This will delete your log file.", func() {
+		mu.Lock()
 		e := os.Remove(FILE_NAME)
+		mu.Unlock()
 		if e != nil {
 			fmt.Println(e)
 		}
@@ -226,7 +197,9 @@ func renderDefensives(w fyne.Window) (fyne.CanvasObject, error) {
 
 	resetLabel := widget.NewLabel("")
 	resetbtn := widget.NewButton("Reset Logs - This will delete your log file.", func() {
+		mu.Lock()
 		e := os.Remove(FILE_NAME)
+		mu.Unlock()
 		if e != nil {
 			fmt.Println(e)
 		}
@@ -262,7 +235,9 @@ func renderKills(w fyne.Window) (fyne.CanvasObject, error) {
 
 	resetLabel := widget.NewLabel("")
 	resetbtn := widget.NewButton("Reset Logs - This will delete your log file.", func() {
+		mu.Lock()
 		e := os.Remove(FILE_NAME)
+		mu.Unlock()
 		if e != nil {
 			fmt.Println(e)
 		}
@@ -298,7 +273,9 @@ func renderArmorDamage(w fyne.Window) (fyne.CanvasObject, error) {
 
 	resetLabel := widget.NewLabel("")
 	resetbtn := widget.NewButton("Reset Logs - This will delete your log file.", func() {
+		mu.Lock()
 		e := os.Remove(FILE_NAME)
+		mu.Unlock()
 		if e != nil {
 			fmt.Println(e)
 		}
@@ -334,7 +311,9 @@ func renderStyles(w fyne.Window) (fyne.CanvasObject, error) {
 
 	resetLabel := widget.NewLabel("")
 	resetbtn := widget.NewButton("Reset Logs - This will delete your log file.", func() {
+		mu.Lock()
 		e := os.Remove(FILE_NAME)
+		mu.Unlock()
 		if e != nil {
 			fmt.Println(e)
 		}
@@ -369,7 +348,9 @@ func renderCombatives(w fyne.Window) (fyne.CanvasObject, error) {
 	}()
 
 	resetbtn := widget.NewButton("Reset Logs - This will delete your log file.", func() {
+		mu.Lock()
 		e := os.Remove(FILE_NAME)
+		mu.Unlock()
 		if e != nil {
 			fmt.Println(e)
 		}
