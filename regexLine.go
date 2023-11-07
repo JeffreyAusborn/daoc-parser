@@ -36,6 +36,7 @@ import (
 var (
 	styleName  string
 	spellName  string
+	userHit    string
 	growthInt  int
 	spellStats Ability
 )
@@ -136,9 +137,16 @@ func (_daocLogs *DaocLogs) regexOffensive(line string, style bool) {
 
 				user := strings.Split(line, "You hit ")[1]
 				user = strings.Split(user, " for")[0]
+				userHit = user
 				userStats := spellStats.findUserStats(user)
 				userStats.MovingDamageReceived = append(userStats.MovingDamageReceived, damageInt)
 			}
+			return
+		}
+		match, _ = regexp.MatchString("You gather energy from your surroundings.*", line)
+		if match {
+			spellStats := _daocLogs.findSpellStats(spellName)
+			spellStats.Siphon += 1
 			return
 		}
 	}
@@ -175,6 +183,7 @@ func (_daocLogs *DaocLogs) regexOffensive(line string, style bool) {
 
 				user := strings.Split(line, "You hit ")[1]
 				user = strings.Split(user, " for")[0]
+				userHit = user
 				userStats := styleStats.findUserStats(user)
 				userStats.MovingDamageReceived = append(userStats.MovingDamageReceived, damageInt)
 			}
@@ -234,8 +243,6 @@ func (_daocLogs *DaocLogs) regexOffensive(line string, style bool) {
 			damage = strings.Split(damage, " ")[0]
 			damageInt, _ = strconv.Atoi(damage)
 		}
-		_daocLogs.getUser().MovingDamageSpells = append(_daocLogs.getUser().MovingDamageSpells, damageInt)
-		_daocLogs.getUser().MovingDamageTotal = append(_daocLogs.getUser().MovingDamageTotal, damageInt)
 
 		spellName := strings.Split(line, "Your ")[1]
 		user := ""
@@ -266,14 +273,7 @@ func (_daocLogs *DaocLogs) regexOffensive(line string, style bool) {
 	// if match {
 	// 	_daocLogs.getUser().MissesTotal += 1
 	// }
-	// match, _ = regexp.MatchString("resists the effect.*", line)
-	// if match {
-	// 	_daocLogs.getUser().ResistsOutTotal += 1
-	// }
-	// match, _ = regexp.MatchString("You gather energy from your surroundings.*", line)
-	// if match {
-	// 	_daocLogs.getUser().SiphonTotal += 1
-	// }
+
 	// match, _ = regexp.MatchString("fully healed", line)
 	// if match {
 	// 	_daocLogs.getUser().OverHeals += 1
@@ -291,20 +291,15 @@ func (_daocLogs *DaocLogs) regexOffensive(line string, style bool) {
 		if spellName != "" {
 			spellStats := _daocLogs.findSpellStats(spellName)
 			spellStats.Crit = append(spellStats.Crit, damageInt)
-			userStats := spellStats.findUserStats(user)
+			userStats := spellStats.findUserStats(userHit)
 			userStats.MovingDamageReceived = append(userStats.MovingDamageReceived, damageInt)
 		} else if styleName != "" {
 			styleStats := _daocLogs.findStyleStats(styleName)
 			styleStats.Crit = append(styleStats.Crit, damageInt)
-			userStats := styleStats.findUserStats(user)
+			userStats := styleStats.findUserStats(userHit)
 			userStats.MovingDamageReceived = append(userStats.MovingDamageReceived, damageInt)
 		}
-
-		// _daocLogs.getUser().MovingDamageTotal = append(_daocLogs.getUser().MovingDamageTotal, damageInt)
-		// _daocLogs.getUser().MovingCritDamage = append(_daocLogs.getUser().MovingCritDamage, damageInt)
-
-		// userStats := _daocLogs.findEnemyStats(user)
-		// userStats.MovingDamageReceived = append(userStats.MovingDamageReceived, damageInt)
+		userHit = "unknown"
 	}
 }
 
@@ -563,22 +558,27 @@ func (_daocLogs *DaocLogs) regexEnemy(line string) {
 		userStats := _daocLogs.findEnemyStats(user)
 		userStats.ResistsInTotal += 1
 
+		// spellName = strings.Split(line, "resists your ")[1]
+		// spellName = strings.Split(spellName, " effect")[0]
+
 		if spellName != "" {
 			spellStats := _daocLogs.findSpellStats(spellName)
 			spellStats.Resists += 1
 		}
+		return
 	}
-
+	// pets?
 	match, _ = regexp.MatchString("resists your.*effect", line)
 	if match {
 		user := strings.Split(line, " resists")[0]
 		user = strings.Split(user, "] ")[1]
-		userStats := _daocLogs.findEnemyStats(user)
+
+		tempSpellName := strings.Split(line, "resists your ")[1]
+		tempSpellName = strings.Split(tempSpellName, " effect")[0]
+		spellStats := _daocLogs.findSpellStats(tempSpellName)
+		spellStats.Resists += 1
+		userStats := spellStats.findUserStats(user)
 		userStats.ResistsInTotal += 1
-		if spellName != "" {
-			spellStats := _daocLogs.findSpellStats(spellName)
-			spellStats.Resists += 1
-		}
 	}
 
 	match, _ = regexp.MatchString("hits you for.*damage ", line)

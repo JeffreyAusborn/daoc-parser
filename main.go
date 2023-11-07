@@ -34,26 +34,29 @@ func openLogFile() {
 	}
 }
 
-func watchFile() error {
+func watchFile() {
 	initialStat, err := os.Stat(FILE_NAME)
 	if err != nil {
-		return err
+		fmt.Println(err)
+		return
 	}
 
 	for {
 		stat, err := os.Stat(FILE_NAME)
 		if err != nil {
-			return err
+			fmt.Println(err)
+			return
 		}
 
 		if stat.Size() != initialStat.Size() || stat.ModTime() != initialStat.ModTime() {
-			break
+			mu.Lock()
+			daocLogs = DaocLogs{}
+			openLogFile()
+			mu.Unlock()
 		}
 
 		time.Sleep(1 * time.Second)
 	}
-
-	return nil
 }
 
 var (
@@ -106,17 +109,7 @@ func main() {
 	defensiveLogs, _ := renderDefensives(myWindow)
 	combativeLogs, _ := renderCombatives(myWindow)
 
-	go func() {
-		for range time.Tick(time.Second * LOG_STREAM_TIME) {
-			err := watchFile()
-			if err == nil {
-				mu.Lock()
-				daocLogs = DaocLogs{}
-				openLogFile()
-				mu.Unlock()
-			}
-		}
-	}()
+	go watchFile()
 
 	tabs := container.NewAppTabs(
 		container.NewTabItem("Spells", spellLogs),
