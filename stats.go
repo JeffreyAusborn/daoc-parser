@@ -87,48 +87,77 @@ func (_daocLogs *DaocLogs) calculateDamageIn() []string {
 
 func (_daocLogs *DaocLogs) calculateHeal() []string {
 	listItems := []string{}
-	if len(_daocLogs.User.TotalSelfHeal)+len(_daocLogs.User.TotalAbsorbed)+len(_daocLogs.User.TotalHeals) > 0 {
-		if len(_daocLogs.User.TotalHeals) > 0 {
-			listItems = append(listItems, "\t----- Total Heals -----\n")
-			min, max := getMinAndMax(_daocLogs.getUser().TotalHeals)
-			listItems = append(listItems, fmt.Sprintf("All Heals: %d\n", sumArr(_daocLogs.User.TotalHeals)))
-			listItems = append(listItems, fmt.Sprintf("Minimum Heals: %d\n", min))
-			listItems = append(listItems, fmt.Sprintf("Maximum Heals: %d\n", max))
-			listItems = append(listItems, fmt.Sprintf("Average Heals: %d\n", sumArr(_daocLogs.User.TotalHeals)/len(_daocLogs.User.TotalHeals)))
+	if len(_daocLogs.getUser().Heals) > 0 {
+		totalHeals := 0
+		// totalSelfHeal := 0
+		totalCrit := 0
+		for _, ability := range _daocLogs.getUser().Heals {
+			totalHeals += sumArr(ability.Output)
+			totalCrit += sumArr(ability.Crit)
 		}
-		if _daocLogs.User.OverHeals > 0 {
-			listItems = append(listItems, fmt.Sprintf("OverHeal Count: %d\n", _daocLogs.User.OverHeals))
+		listItems = append(listItems, "\t----- Total Heals -----\n")
+		// min, max := getMinAndMax(_daocLogs.getUser().TotalHeals)
+		listItems = append(listItems, fmt.Sprintf("Total Heals: %d\n", totalHeals))
+		listItems = append(listItems, fmt.Sprintf("Total Crit Heals: %d\n", totalCrit))
+		// listItems = append(listItems, fmt.Sprintf("Maximum Heals: %d\n", max))
+		// listItems = append(listItems, fmt.Sprintf("Average Heals: %d\n", sumArr(_daocLogs.User.TotalHeals)/len(_daocLogs.User.TotalHeals)))
+		for _, ability := range _daocLogs.getUser().Heals {
+			listItems = append(listItems, fmt.Sprintf("\t----- %s -----", ability.Name))
+			listItems = append(listItems, fmt.Sprintf("Heal Count: %d", len(ability.Output)))
+			listItems = append(listItems, fmt.Sprintf("Heals: %d\n", sumArr(ability.Output)))
+			listItems = append(listItems, fmt.Sprintf("Crit: %d\n", sumArr(ability.Crit)))
+			userRupt := make(map[string]int)
+			for _, user := range ability.Interupts {
+				userRupt[user] += 1
+			}
+			for user, count := range userRupt {
+				listItems = append(listItems, fmt.Sprintf("%s interrupted you %d times", user, count))
+			}
 		}
-		if len(_daocLogs.User.TotalSelfHeal) > 0 {
-			min, max := getMinAndMax(_daocLogs.User.TotalSelfHeal)
-			listItems = append(listItems, "\t----- Self Heals -----\n")
-			listItems = append(listItems, fmt.Sprintf("Total Self Heals: %d\n", sumArr(_daocLogs.User.TotalSelfHeal)))
-			listItems = append(listItems, fmt.Sprintf("Minimum Self Heals: %d\n", min))
-			listItems = append(listItems, fmt.Sprintf("Maximum Self Heals: %d\n", max))
-			listItems = append(listItems, fmt.Sprintf("Average Self Heals: %d\n", sumArr(_daocLogs.User.TotalSelfHeal)/len(_daocLogs.User.TotalSelfHeal)))
-		}
-		if len(_daocLogs.User.TotalHealsCrits) > 0 {
-			listItems = append(listItems, "\t----- Crit Heals -----\n")
-			min, max := getMinAndMax(_daocLogs.User.TotalHealsCrits)
-			listItems = append(listItems, fmt.Sprintf("Heal Crits: %d\n", sumArr(_daocLogs.User.TotalHealsCrits)))
-			listItems = append(listItems, fmt.Sprintf("Minimum Crit Heals: %d\n", min))
-			listItems = append(listItems, fmt.Sprintf("Maximum Crit Heals: %d\n", max))
-			listItems = append(listItems, fmt.Sprintf("Average Crit Heals: %d\n", sumArr(_daocLogs.User.TotalHealsCrits)/len(_daocLogs.User.TotalHealsCrits)))
-		}
-		if len(_daocLogs.User.TotalAbsorbed) > 0 {
-			listItems = append(listItems, "\t----- Absorbs -----\n")
-			min, max := getMinAndMax(_daocLogs.User.TotalAbsorbed)
-			listItems = append(listItems, fmt.Sprintf("Absorbed: %d\n", sumArr(_daocLogs.User.TotalAbsorbed)))
-			listItems = append(listItems, fmt.Sprintf("Minimum Absorbed: %d\n", min))
-			listItems = append(listItems, fmt.Sprintf("Maximum Absorbed: %d\n", max))
-			listItems = append(listItems, fmt.Sprintf("Average Absorbed: %d\n", sumArr(_daocLogs.User.TotalAbsorbed)/len(_daocLogs.User.TotalAbsorbed)))
-		}
-		for _, user := range _daocLogs.Friendly {
-			listItems = append(listItems, fmt.Sprintf("\t----- %s -----", user.UserName))
-			listItems = append(listItems, fmt.Sprintf("Healed: %d\n", sumArr(user.TotalHeals)))
-		}
-
 	}
+
+	// if len(_daocLogs.User.TotalSelfHeal)+len(_daocLogs.User.TotalAbsorbed)+len(_daocLogs.User.TotalHeals) > 0 {
+	// 	if len(_daocLogs.User.TotalHeals) > 0 {
+	// 		listItems = append(listItems, "\t----- Total Heals -----\n")
+	// 		min, max := getMinAndMax(_daocLogs.getUser().TotalHeals)
+	// 		listItems = append(listItems, fmt.Sprintf("All Heals: %d\n", sumArr(_daocLogs.User.TotalHeals)))
+	// 		listItems = append(listItems, fmt.Sprintf("Minimum Heals: %d\n", min))
+	// 		listItems = append(listItems, fmt.Sprintf("Maximum Heals: %d\n", max))
+	// 		listItems = append(listItems, fmt.Sprintf("Average Heals: %d\n", sumArr(_daocLogs.User.TotalHeals)/len(_daocLogs.User.TotalHeals)))
+	// 	}
+	// 	if _daocLogs.User.OverHeals > 0 {
+	// 		listItems = append(listItems, fmt.Sprintf("OverHeal Count: %d\n", _daocLogs.User.OverHeals))
+	// 	}
+	// 	if len(_daocLogs.User.TotalSelfHeal) > 0 {
+	// 		min, max := getMinAndMax(_daocLogs.User.TotalSelfHeal)
+	// 		listItems = append(listItems, "\t----- Self Heals -----\n")
+	// 		listItems = append(listItems, fmt.Sprintf("Total Self Heals: %d\n", sumArr(_daocLogs.User.TotalSelfHeal)))
+	// 		listItems = append(listItems, fmt.Sprintf("Minimum Self Heals: %d\n", min))
+	// 		listItems = append(listItems, fmt.Sprintf("Maximum Self Heals: %d\n", max))
+	// 		listItems = append(listItems, fmt.Sprintf("Average Self Heals: %d\n", sumArr(_daocLogs.User.TotalSelfHeal)/len(_daocLogs.User.TotalSelfHeal)))
+	// 	}
+	// 	if len(_daocLogs.User.TotalHealsCrits) > 0 {
+	// 		listItems = append(listItems, "\t----- Crit Heals -----\n")
+	// 		min, max := getMinAndMax(_daocLogs.User.TotalHealsCrits)
+	// 		listItems = append(listItems, fmt.Sprintf("Heal Crits: %d\n", sumArr(_daocLogs.User.TotalHealsCrits)))
+	// 		listItems = append(listItems, fmt.Sprintf("Minimum Crit Heals: %d\n", min))
+	// 		listItems = append(listItems, fmt.Sprintf("Maximum Crit Heals: %d\n", max))
+	// 		listItems = append(listItems, fmt.Sprintf("Average Crit Heals: %d\n", sumArr(_daocLogs.User.TotalHealsCrits)/len(_daocLogs.User.TotalHealsCrits)))
+	// 	}
+	// 	if len(_daocLogs.User.TotalAbsorbed) > 0 {
+	// 		listItems = append(listItems, "\t----- Absorbs -----\n")
+	// 		min, max := getMinAndMax(_daocLogs.User.TotalAbsorbed)
+	// 		listItems = append(listItems, fmt.Sprintf("Absorbed: %d\n", sumArr(_daocLogs.User.TotalAbsorbed)))
+	// 		listItems = append(listItems, fmt.Sprintf("Minimum Absorbed: %d\n", min))
+	// 		listItems = append(listItems, fmt.Sprintf("Maximum Absorbed: %d\n", max))
+	// 		listItems = append(listItems, fmt.Sprintf("Average Absorbed: %d\n", sumArr(_daocLogs.User.TotalAbsorbed)/len(_daocLogs.User.TotalAbsorbed)))
+	// 	}
+	// 	for _, user := range _daocLogs.Friendly {
+	// 		listItems = append(listItems, fmt.Sprintf("\t----- %s -----", user.UserName))
+	// 		listItems = append(listItems, fmt.Sprintf("Healed: %d\n", sumArr(user.TotalHeals)))
+	// 	}
+
+	// }
 	return listItems
 }
 

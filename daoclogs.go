@@ -91,7 +91,7 @@ type Ability struct {
 	Crit        []int
 	GrowthRate  []int
 	Interupts   []string
-	Enemy       []*Stats
+	Users       []*Stats
 
 	Resists   int
 	Blocked   int
@@ -151,16 +151,16 @@ func (_daocLogs *DaocLogs) findDotsNPetsStats(ability string) *Ability {
 	return &newAbility
 }
 
-func (_spell *Ability) findEnemyStats(user string) *Stats {
+func (_spell *Ability) findUserStats(user string) *Stats {
 	user = strings.TrimSpace(strings.ToLower(user))
-	for _, enemy := range _spell.Enemy {
+	for _, enemy := range _spell.Users {
 		if enemy.UserName == user {
 			return enemy
 		}
 	}
 	newUser := Stats{}
 	newUser.UserName = user
-	_spell.Enemy = append(_spell.Enemy, &newUser)
+	_spell.Users = append(_spell.Users, &newUser)
 	return &newUser
 }
 
