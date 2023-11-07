@@ -9,7 +9,6 @@ type DaocLogs struct {
 	User     Stats
 	Enemy    []*Stats
 	Friendly []*Stats
-	Bindings []string
 }
 
 /*
@@ -85,16 +84,19 @@ Breakdown of each ability that we'll aggregate later
 */
 type Ability struct {
 	Name string
+	Type string // heal, spell, melee
 
-	Output      []int // damage, heals, etc
-	ExtraDamage []int // damage add, procs, style dd, etc
-	Crit        []int // store crit damage, heals
-	GrowtRate   []int
+	Output      []int
+	ExtraDamage []int
+	Crit        []int
+	GrowthRate  []int
+	Interupts   []string
+	Enemy       []*Stats
 
-	Resists   int // spell resisted
-	Blocked   int // style/base blocked
-	Parried   int // style/base parried
-	Evaded    int // style/base evades
+	Resists   int
+	Blocked   int
+	Parried   int
+	Evaded    int
 	Siphon    int
 	OverHeals int
 }
@@ -102,22 +104,6 @@ type Ability struct {
 /*
 	Create getters and setters for the stats object
 */
-
-func (_daocLogs *DaocLogs) writeLogValues() []string {
-	listItems := []string{}
-	listItems = append(listItems, _daocLogs.calculateArmorhits()...)
-	// listItems = append(listItems, _daocLogs.calculateDamageIn()...)
-	// listItems = append(listItems, _daocLogs.calculateEnemyDensives()...)
-	listItems = append(listItems, _daocLogs.calculateDamageOut()...)
-	listItems = append(listItems, _daocLogs.calculateHeal()...)
-	listItems = append(listItems, _daocLogs.calculateDensives()...)
-	listItems = append(listItems, _daocLogs.getCombativeUsers()...)
-	listItems = append(listItems, _daocLogs.calculateTime()...)
-	return listItems
-	// _daocLogs.calculateDamageOut()
-	// return []string{_daocLogs.calculateArmorhits(), _daocLogs.calculateDamageIn(), _daocLogs.calculateEnemyDensives(), _daocLogs.calculateDamageOut(), _daocLogs.calculateHeal(), _daocLogs.calculateDensives(), _daocLogs.getCombativeUsers(), _daocLogs.calculateTime()}
-	// return _daocLogs.calculateArmorhits() + "\n" + _daocLogs.calculateDamageIn() + "\n" + _daocLogs.calculateEnemyDensives() + "\n" + _daocLogs.calculateDamageOut() + "\n" + _daocLogs.calculateHeal() + "\n" + _daocLogs.calculateDensives() + "\n" + _daocLogs.getCombativeUsers() + "\n" + _daocLogs.calculateTime()
-}
 
 func (_daocLogs *DaocLogs) getUser() *Stats {
 	if _daocLogs != nil {
@@ -141,6 +127,19 @@ func (_daocLogs *DaocLogs) findEnemyStats(user string) *Stats {
 
 func (_daocLogs *DaocLogs) findSpellStats(ability string) *Ability {
 	ability = strings.TrimSpace(strings.ToLower(ability))
+	for _, stats := range _daocLogs.User.Spells {
+		if stats.Name == ability {
+			return stats
+		}
+	}
+	newAbility := Ability{}
+	newAbility.Name = ability
+	_daocLogs.getUser().Spells = append(_daocLogs.getUser().Spells, &newAbility)
+	return &newAbility
+}
+
+func (_daocLogs *DaocLogs) findDotsNPetsStats(ability string) *Ability {
+	ability = strings.TrimSpace(strings.ToLower(ability))
 	for _, stats := range _daocLogs.User.DotsNPets {
 		if stats.Name == ability {
 			return stats
@@ -152,9 +151,22 @@ func (_daocLogs *DaocLogs) findSpellStats(ability string) *Ability {
 	return &newAbility
 }
 
+func (_spell *Ability) findEnemyStats(user string) *Stats {
+	user = strings.TrimSpace(strings.ToLower(user))
+	for _, enemy := range _spell.Enemy {
+		if enemy.UserName == user {
+			return enemy
+		}
+	}
+	newUser := Stats{}
+	newUser.UserName = user
+	_spell.Enemy = append(_spell.Enemy, &newUser)
+	return &newUser
+}
+
 func (_daocLogs *DaocLogs) findStyleStats(ability string) *Ability {
 	ability = strings.TrimSpace(strings.ToLower(ability))
-	for _, stats := range _daocLogs.User.Styles {
+	for _, stats := range _daocLogs.getUser().Styles {
 		if stats.Name == ability {
 			return stats
 		}
@@ -176,6 +188,16 @@ func (_daocLogs *DaocLogs) findHealStats(ability string) *Ability {
 	newAbility.Name = ability
 	_daocLogs.getUser().Heals = append(_daocLogs.getUser().Heals, &newAbility)
 	return &newAbility
+}
+
+func (_daocLogs *DaocLogs) healAbilityExist(ability string) bool {
+	ability = strings.TrimSpace(strings.ToLower(ability))
+	for _, stats := range _daocLogs.User.Heals {
+		if stats.Name == ability {
+			return true
+		}
+	}
+	return false
 }
 
 func (_daocLogs *DaocLogs) findFriendlyStats(user string) *Stats {

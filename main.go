@@ -54,19 +54,19 @@ func iterateLogFile(f *os.File) {
 		if err != nil {
 			break
 		}
-		// [1,2,3,4,5] -> [2,3,4,5] -> [2,3,4,5,6]
-		if len(tempLines) >= 5 {
-			temp := []string{}
-			for idx, line := range tempLines {
-				if idx == 0 {
-					continue
-				}
-				temp = append(temp, line)
-			}
-			tempLines = temp
-		}
-		tempLines = append(tempLines, line)
-		style = daocLogs.regexOffensive(line, style)
+		// // [1,2,3,4,5] -> [2,3,4,5] -> [2,3,4,5,6]
+		// if len(tempLines) >= 5 {
+		// 	temp := []string{}
+		// 	for idx, line := range tempLines {
+		// 		if idx == 0 {
+		// 			continue
+		// 		}
+		// 		temp = append(temp, line)
+		// 	}
+		// 	tempLines = temp
+		// }
+		// tempLines = append(tempLines, line)
+		daocLogs.regexOffensive(line, style)
 		daocLogs.regexDefensives(line)
 		daocLogs.regexSupport(line)
 		daocLogs.regexPets(line)
@@ -74,7 +74,7 @@ func iterateLogFile(f *os.File) {
 		daocLogs.regexEnemy(line)
 		daocLogs.regexTime(line)
 	}
-	daocLogs.writeLogValues()
+	// daocLogs.writeLogValues()
 }
 
 // TODO: Remove duplication on each render
@@ -84,10 +84,10 @@ func main() {
 	myApp := app.New()
 	myWindow := myApp.NewWindow("Dark Age of Camelot - Chat Parser - Theorist")
 	openLogFile(FILE_NAME)
-	// allLogs, _ := renderAll(myWindow)
+	spellLogs, _ := renderSpells(myWindow)
 	killLog, _ := renderKills(myWindow)
 	damageArmorLogs, _ := renderArmorDamage(myWindow)
-	damageOutLogs, _ := renderDamagOut(myWindow)
+	styleLogs, _ := renderStyles(myWindow)
 	healLogs, _ := renderHeals(myWindow)
 	defensiveLogs, _ := renderDefensives(myWindow)
 	combativeLogs, _ := renderCombatives(myWindow)
@@ -102,9 +102,9 @@ func main() {
 	}()
 
 	tabs := container.NewAppTabs(
-		// container.NewTabItem("All", allLogs),
-		container.NewTabItem("Damage", damageOutLogs),
-		container.NewTabItem("Healing", healLogs),
+		container.NewTabItem("Spells", spellLogs),
+		container.NewTabItem("Styles", styleLogs),
+		container.NewTabItem("Healing and Absorb", healLogs),
 		container.NewTabItem("Defensive", defensiveLogs),
 		container.NewTabItem("Armor Damaged", damageArmorLogs),
 		container.NewTabItem("Enemy", combativeLogs),
@@ -126,8 +126,8 @@ func main() {
 	myWindow.ShowAndRun()
 }
 
-func renderAll(w fyne.Window) (fyne.CanvasObject, error) {
-	chatLogs := daocLogs.writeLogValues()
+func renderSpells(w fyne.Window) (fyne.CanvasObject, error) {
+	chatLogs := daocLogs.calculateSpells()
 	l := widget.NewList(func() int {
 		return len(chatLogs)
 	}, func() fyne.CanvasObject {
@@ -143,7 +143,7 @@ func renderAll(w fyne.Window) (fyne.CanvasObject, error) {
 	go func() {
 		for range time.Tick(time.Second * LOG_STREAM_TIME) {
 			mu.Lock()
-			chatLogs = daocLogs.writeLogValues()
+			chatLogs = daocLogs.calculateSpells()
 			l.Refresh()
 			mu.Unlock()
 		}
@@ -306,8 +306,8 @@ func renderArmorDamage(w fyne.Window) (fyne.CanvasObject, error) {
 	return tab, nil
 }
 
-func renderDamagOut(w fyne.Window) (fyne.CanvasObject, error) {
-	chatLogs := daocLogs.calculateDamageOut()
+func renderStyles(w fyne.Window) (fyne.CanvasObject, error) {
+	chatLogs := daocLogs.calculateStyles()
 	l := widget.NewList(func() int {
 		return len(chatLogs)
 	}, func() fyne.CanvasObject {
@@ -323,7 +323,7 @@ func renderDamagOut(w fyne.Window) (fyne.CanvasObject, error) {
 	go func() {
 		for range time.Tick(time.Second * LOG_STREAM_TIME) {
 			mu.Lock()
-			chatLogs = daocLogs.calculateDamageOut()
+			chatLogs = daocLogs.calculateStyles()
 			l.Refresh()
 			mu.Unlock()
 		}

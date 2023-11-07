@@ -4,7 +4,7 @@ import (
 	"fmt"
 )
 
-func (_daocLogs *DaocLogs) calculateDamageOut() []string {
+func (_daocLogs *DaocLogs) removeMe() []string {
 	listItems := []string{}
 	if len(_daocLogs.User.MovingDamageTotal) > 0 {
 		listItems = append(listItems, "\t\t----- Damage Out -----")
@@ -34,20 +34,19 @@ func (_daocLogs *DaocLogs) calculateDamageOut() []string {
 		}
 
 		if len(_daocLogs.getUser().Styles) > 0 {
-			listItems = append(listItems, "\t\t----- Styles -----")
+			// listItems = append(listItems, "\t\t----- Styles -----")
 			for _, style := range _daocLogs.getUser().Styles {
-
 				minD, maxD := getMinAndMax(style.Output)
 				listItems = append(listItems, fmt.Sprintf("\t----- %s -----", style.Name))
 				listItems = append(listItems, fmt.Sprintf("Damage: %d\n", sumArr(style.Output)))
 				listItems = append(listItems, fmt.Sprintf("Damage Min: %d\n", minD))
 				listItems = append(listItems, fmt.Sprintf("Damage Max: %d\n", maxD))
 				listItems = append(listItems, fmt.Sprintf("Damage Average: %d\n", sumArr(style.Output)/len(style.Output)))
-				if len(style.GrowtRate) > 0 {
-					minG, maxG := getMinAndMax(style.GrowtRate)
+				if len(style.GrowthRate) > 0 {
+					minG, maxG := getMinAndMax(style.GrowthRate)
 					listItems = append(listItems, fmt.Sprintf("Growth Rate Min: %d\n", minG))
 					listItems = append(listItems, fmt.Sprintf("Growth Rate Max: %d\n", maxG))
-					listItems = append(listItems, fmt.Sprintf("Growth Rate Average: %d\n", sumArr(style.GrowtRate)/len(style.GrowtRate)))
+					listItems = append(listItems, fmt.Sprintf("Growth Rate Average: %d\n", sumArr(style.GrowthRate)/len(style.GrowthRate)))
 				}
 			}
 		}
@@ -89,7 +88,6 @@ func (_daocLogs *DaocLogs) calculateDamageIn() []string {
 func (_daocLogs *DaocLogs) calculateHeal() []string {
 	listItems := []string{}
 	if len(_daocLogs.User.TotalSelfHeal)+len(_daocLogs.User.TotalAbsorbed)+len(_daocLogs.User.TotalHeals) > 0 {
-		listItems = append(listItems, "\t\t----- Healing & Self Absorb -----\n")
 		if len(_daocLogs.User.TotalHeals) > 0 {
 			listItems = append(listItems, "\t----- Total Heals -----\n")
 			min, max := getMinAndMax(_daocLogs.getUser().TotalHeals)
@@ -240,6 +238,84 @@ func (_daocLogs *DaocLogs) calculateArmorhits() []string {
 		if len(foot) > 0 {
 			listItems = append(listItems, fmt.Sprintf("Foot Hit: %d", len(foot)))
 			listItems = append(listItems, fmt.Sprintf("Foot Damage: %d", sumArr(foot)))
+		}
+	}
+	return listItems
+}
+
+// WORKING ON REWORK
+
+func (_daocLogs *DaocLogs) calculateSpells() []string {
+	listItems := []string{}
+	if len(_daocLogs.getUser().Spells) > 0 {
+		totalHits := 0
+		totalDamage := 0
+		totalCrit := 0
+		totalInterupts := 0
+		for _, ability := range _daocLogs.getUser().Spells {
+			totalHits += len(ability.Output)
+			totalDamage += sumArr(ability.Output)
+			totalCrit += sumArr(ability.Crit)
+			totalInterupts += len(ability.Interupts)
+		}
+
+		listItems = append(listItems, fmt.Sprintf("Total Hits: %d", totalHits))
+		listItems = append(listItems, fmt.Sprintf("Total Damage: %d\n", totalDamage))
+		listItems = append(listItems, fmt.Sprintf("Total Crit: %d\n", totalCrit))
+		listItems = append(listItems, fmt.Sprintf("Total Interupts Received: %d\n", totalInterupts))
+
+		for _, ability := range _daocLogs.getUser().Spells {
+			listItems = append(listItems, fmt.Sprintf("\t----- %s -----", ability.Name))
+			listItems = append(listItems, fmt.Sprintf("Hits: %d", len(ability.Output)))
+			listItems = append(listItems, fmt.Sprintf("Damage: %d\n", sumArr(ability.Output)))
+			listItems = append(listItems, fmt.Sprintf("Crit: %d\n", sumArr(ability.Crit)))
+			userRupt := make(map[string]int)
+			for _, user := range ability.Interupts {
+				userRupt[user] += 1
+			}
+			for user, count := range userRupt {
+				listItems = append(listItems, fmt.Sprintf("%s interrupted you %d times", user, count))
+			}
+
+		}
+	}
+	return listItems
+}
+
+func (_daocLogs *DaocLogs) calculateStyles() []string {
+	listItems := []string{}
+	if len(_daocLogs.getUser().Styles) > 0 {
+		totalHits := 0
+		totalDamage := 0
+		totalCrit := 0
+		totalExtraDamage := 0
+		for _, ability := range _daocLogs.getUser().Styles {
+			totalHits += len(ability.Output)
+			totalDamage += sumArr(ability.Output)
+			totalCrit += sumArr(ability.Crit)
+			totalExtraDamage += sumArr(ability.ExtraDamage)
+		}
+
+		listItems = append(listItems, fmt.Sprintf("Total Hits: %d", totalHits))
+		listItems = append(listItems, fmt.Sprintf("Total Damage: %d\n", totalDamage))
+		listItems = append(listItems, fmt.Sprintf("Total Crit: %d\n", totalCrit))
+		listItems = append(listItems, fmt.Sprintf("Total Extra Damage: %d\n", totalExtraDamage))
+
+		for _, ability := range _daocLogs.getUser().Styles {
+			listItems = append(listItems, fmt.Sprintf("\t----- %s -----", ability.Name))
+			listItems = append(listItems, fmt.Sprintf("Hits: %d", len(ability.Output)))
+			listItems = append(listItems, fmt.Sprintf("Damage: %d\n", sumArr(ability.Output)))
+			listItems = append(listItems, fmt.Sprintf("Extra Damage: %d\n", sumArr(ability.ExtraDamage)))
+			listItems = append(listItems, fmt.Sprintf("Crit: %d\n", sumArr(ability.Crit)))
+			listItems = append(listItems, fmt.Sprintf("Blocked: %d", ability.Blocked))
+			listItems = append(listItems, fmt.Sprintf("Evaded: %d\n", ability.Evaded))
+			listItems = append(listItems, fmt.Sprintf("Parried: %d\n", ability.Parried))
+			if len(ability.GrowthRate) > 0 {
+				minG, maxG := getMinAndMax(ability.GrowthRate)
+				listItems = append(listItems, fmt.Sprintf("Growth Rate Min: %d\n", minG))
+				listItems = append(listItems, fmt.Sprintf("Growth Rate Max: %d\n", maxG))
+				listItems = append(listItems, fmt.Sprintf("Growth Rate Average: %d\n", sumArr(ability.GrowthRate)/len(ability.GrowthRate)))
+			}
 		}
 	}
 	return listItems
