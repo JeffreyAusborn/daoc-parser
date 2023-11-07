@@ -288,14 +288,14 @@ func (_daocLogs *DaocLogs) calculateSpells() []string {
 			totalInterupts += len(ability.Interupts)
 		}
 
-		listItems = append(listItems, fmt.Sprintf("Total Casts: %d", totalHits))
+		listItems = append(listItems, fmt.Sprintf("Total Hits: %d", totalHits))
 		listItems = append(listItems, fmt.Sprintf("Total Damage: %d\n", totalDamage))
 		listItems = append(listItems, fmt.Sprintf("Total Crit: %d\n", totalCrit))
 		listItems = append(listItems, fmt.Sprintf("Total Interupts Received: %d\n", totalInterupts))
 
 		for _, ability := range _daocLogs.getUser().Spells {
 			listItems = append(listItems, fmt.Sprintf("\t----- %s -----", ability.Name))
-			listItems = append(listItems, fmt.Sprintf("Casts: %d", len(ability.Output)))
+			listItems = append(listItems, fmt.Sprintf("Hits: %d", len(ability.Output)))
 			if sumArr(ability.Output) > 0 {
 				listItems = append(listItems, fmt.Sprintf("Damage: %d\n", sumArr(ability.Output)))
 			}

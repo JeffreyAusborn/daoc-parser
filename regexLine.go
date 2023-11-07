@@ -131,7 +131,7 @@ func (_daocLogs *DaocLogs) regexOffensive(line string, style bool) {
 
 	if styleName != "" {
 		spellName = ""
-		match, _ = regexp.MatchString("extra damage", line)
+		match, _ = regexp.MatchString("you hit.*extra damage", line)
 		if match {
 			damage := strings.Split(line, " for ")[1]
 			damage = strings.Split(damage, " extra")[0]
