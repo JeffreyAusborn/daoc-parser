@@ -279,33 +279,75 @@ func (_daocLogs *DaocLogs) calculateStyles() []string {
 		listItems = append(listItems, fmt.Sprintf("Total Crit: %d\n", totalCrit))
 		listItems = append(listItems, fmt.Sprintf("Total Extra Damage: %d\n", totalExtraDamage))
 
+		totalHits = 0
+		totalDamage = 0
+		totalCrit = 0
+		totalExtraDamage = 0
 		for _, ability := range _daocLogs.getUser().Styles {
-			listItems = append(listItems, fmt.Sprintf("\t----- %s -----", ability.Name))
-			listItems = append(listItems, fmt.Sprintf("Hits: %d", len(ability.Output)))
-			listItems = append(listItems, fmt.Sprintf("Damage: %d\n", sumArr(ability.Output)))
-			if sumArr(ability.ExtraDamage) > 0 {
-				listItems = append(listItems, fmt.Sprintf("Extra Damage: %d\n", sumArr(ability.ExtraDamage)))
+			for _, weapon := range ability.Weapons {
+				totalHits += len(weapon.Output)
+				totalDamage += sumArr(weapon.Output)
+				totalCrit += sumArr(weapon.Crit)
+				totalExtraDamage += sumArr(weapon.ExtraDamage)
 			}
-			if sumArr(ability.Crit) > 0 {
-				listItems = append(listItems, fmt.Sprintf("Crit: %d\n", sumArr(ability.Crit)))
+		}
+
+		for _, ability := range _daocLogs.getUser().Styles {
+			totalHits = 0
+			totalDamage = 0
+			totalCrit = 0
+			totalExtraDamage = 0
+			for _, weapon := range ability.Weapons {
+				totalHits += len(weapon.Output)
+				totalDamage += sumArr(weapon.Output)
+				totalCrit += sumArr(weapon.Crit)
+				totalExtraDamage += sumArr(weapon.ExtraDamage)
+			}
+			listItems = append(listItems, fmt.Sprintf("\t\t----- %s -----", ability.Name))
+			listItems = append(listItems, fmt.Sprintf("Total Hits: %d", totalHits))
+			listItems = append(listItems, fmt.Sprintf("Total Damage: %d\n", totalDamage))
+			if totalCrit > 0 {
+				listItems = append(listItems, fmt.Sprintf("Total Crit: %d\n", totalCrit))
+			}
+			if totalExtraDamage > 0 {
+				listItems = append(listItems, fmt.Sprintf("Total Extra Damage: %d\n", totalExtraDamage))
 			}
 			if ability.Stunned > 0 {
-				listItems = append(listItems, fmt.Sprintf("Stunned: %d\n", ability.Stunned))
+				listItems = append(listItems, fmt.Sprintf("Total Stunned: %d\n", ability.Stunned))
 			}
 			if ability.Blocked > 0 {
-				listItems = append(listItems, fmt.Sprintf("Blocked: %d", ability.Blocked))
+				listItems = append(listItems, fmt.Sprintf("Total Blocked: %d", ability.Blocked))
 			}
 			if ability.Evaded > 0 {
-				listItems = append(listItems, fmt.Sprintf("Evaded: %d\n", ability.Evaded))
+				listItems = append(listItems, fmt.Sprintf("Total Evaded: %d\n", ability.Evaded))
 			}
 			if ability.Parried > 0 {
-				listItems = append(listItems, fmt.Sprintf("Parried: %d\n", ability.Parried))
+				listItems = append(listItems, fmt.Sprintf("Total Parried: %d\n", ability.Parried))
 			}
+
 			if len(ability.GrowthRate) > 0 {
 				minG, maxG := getMinAndMax(ability.GrowthRate)
 				listItems = append(listItems, fmt.Sprintf("Growth Rate Min: %d\n", minG))
 				listItems = append(listItems, fmt.Sprintf("Growth Rate Max: %d\n", maxG))
 				listItems = append(listItems, fmt.Sprintf("Growth Rate Average: %d\n", sumArr(ability.GrowthRate)/len(ability.GrowthRate)))
+			}
+
+			for _, weapon := range ability.Weapons {
+				listItems = append(listItems, fmt.Sprintf("\t----- %s -----", weapon.Name))
+				listItems = append(listItems, fmt.Sprintf("Hits: %d", len(weapon.Output)))
+				listItems = append(listItems, fmt.Sprintf("Damage: %d\n", sumArr(weapon.Output)))
+				if sumArr(weapon.Crit) > 0 {
+					listItems = append(listItems, fmt.Sprintf("Crit: %d\n", sumArr(weapon.Crit)))
+				}
+				if sumArr(weapon.ExtraDamage) > 0 {
+					listItems = append(listItems, fmt.Sprintf("Extra Damage: %d\n", sumArr(weapon.ExtraDamage)))
+				}
+				if len(weapon.GrowthRate) > 0 {
+					minG, maxG := getMinAndMax(weapon.GrowthRate)
+					listItems = append(listItems, fmt.Sprintf("Growth Rate Min: %d\n", minG))
+					listItems = append(listItems, fmt.Sprintf("Growth Rate Max: %d\n", maxG))
+					listItems = append(listItems, fmt.Sprintf("Growth Rate Average: %d\n", sumArr(weapon.GrowthRate)/len(weapon.GrowthRate)))
+				}
 			}
 		}
 	}

@@ -93,6 +93,7 @@ type Ability struct {
 	GrowthRate  []int
 	Interupts   []string
 	Users       []*Stats
+	Weapons     []*Ability
 
 	Stunned   int
 	Resists   int
@@ -101,6 +102,11 @@ type Ability struct {
 	Evaded    int
 	Siphon    int
 	OverHeals int
+}
+
+type Weapon struct {
+	Name   string
+	Output []int
 }
 
 /*
@@ -183,6 +189,19 @@ func (_daocLogs *DaocLogs) findStyleStats(ability string) *Ability {
 	newAbility.Name = ability
 	_daocLogs.getUser().Styles = append(_daocLogs.getUser().Styles, &newAbility)
 	return &newAbility
+}
+
+func (_ability *Ability) findWeaponStats(weaponName string) *Ability {
+	weaponName = strings.TrimSpace(strings.ToLower(weaponName))
+	for _, weapon := range _ability.Weapons {
+		if weapon.Name == weaponName {
+			return weapon
+		}
+	}
+	newWeapon := Ability{}
+	newWeapon.Name = weaponName
+	_ability.Weapons = append(_ability.Weapons, &newWeapon)
+	return &newWeapon
 }
 
 func (_daocLogs *DaocLogs) findHealStats(ability string) *Ability {

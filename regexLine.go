@@ -35,6 +35,7 @@ import (
 
 var (
 	styleName  string
+	weaponName string
 	spellName  string
 	userHit    string
 	growthInt  int
@@ -55,6 +56,13 @@ func (_daocLogs *DaocLogs) regexOffensive(line string, style bool) {
 
 	match, _ := regexp.MatchString("@@", line)
 	if match {
+		return
+	}
+
+	match, _ = regexp.MatchString("You fail to execute", line)
+	if match {
+		spellName = ""
+		styleName = ""
 		return
 	}
 
@@ -81,6 +89,21 @@ func (_daocLogs *DaocLogs) regexOffensive(line string, style bool) {
 		styleName = strings.Split(line, "perform a ")[1]
 		styleName = strings.Split(styleName, "!")[0]
 		spellName = ""
+		_daocLogs.findStyleStats(styleName)
+		return
+	}
+
+	match, _ = regexp.MatchString("You perform your.*perfectly", line)
+	if match {
+		spellName = ""
+		styleName = strings.Split(line, "perform your ")[1]
+		styleName = strings.Split(styleName, " perfectly")[0]
+		match, _ = regexp.MatchString("Growth", line)
+		if match {
+			growthRate := strings.Split(line, ", Growth")[0]
+			growthRate = strings.Split(growthRate, "+")[1]
+			growthInt, _ = strconv.Atoi(growthRate)
+		}
 		_daocLogs.findStyleStats(styleName)
 		return
 	}
@@ -167,6 +190,10 @@ func (_daocLogs *DaocLogs) regexOffensive(line string, style bool) {
 			user = strings.Split(user, " for")[0]
 			userStats := styleStats.findUserStats(user)
 			userStats.MovingDamageReceived = append(userStats.MovingDamageReceived, damageInt)
+			if weaponName != "" {
+				weaponStats := styleStats.findWeaponStats(weaponName)
+				weaponStats.ExtraDamage = append(weaponStats.ExtraDamage, damageInt)
+			}
 			return
 		}
 
@@ -186,6 +213,11 @@ func (_daocLogs *DaocLogs) regexOffensive(line string, style bool) {
 				userHit = user
 				userStats := styleStats.findUserStats(user)
 				userStats.MovingDamageReceived = append(userStats.MovingDamageReceived, damageInt)
+
+				if weaponName != "" {
+					weaponStats := styleStats.findWeaponStats(weaponName)
+					weaponStats.ExtraDamage = append(weaponStats.ExtraDamage, damageInt)
+				}
 			}
 			return
 		}
@@ -204,13 +236,23 @@ func (_daocLogs *DaocLogs) regexOffensive(line string, style bool) {
 				userStats := _daocLogs.findEnemyStats(user)
 				userStats.MovingDamageReceived = append(userStats.MovingDamageReceived, damageInt)
 
-				weaponName := strings.Split(line, "with your ")[1]
+				weaponName = strings.Split(line, "with your ")[1]
 				weaponName = strings.Split(weaponName, " and hit")[0]
 
 				styleStats := _daocLogs.findStyleStats(styleName)
 				styleStats.Output = append(styleStats.Output, damageInt)
-				styleStats.GrowthRate = append(styleStats.GrowthRate, growthInt)
+
+				weaponStats := styleStats.findWeaponStats(weaponName)
+				weaponStats.Output = append(weaponStats.Output, damageInt)
+
+				if growthInt > 0 {
+					styleStats.GrowthRate = append(styleStats.GrowthRate, growthInt)
+				}
+				if growthInt > 0 {
+					weaponStats.GrowthRate = append(weaponStats.GrowthRate, growthInt)
+				}
 			}
+			return
 		}
 		match, _ = regexp.MatchString("You perform your.*perfectly", line)
 		if match {
@@ -222,6 +264,31 @@ func (_daocLogs *DaocLogs) regexOffensive(line string, style bool) {
 				growthRate = strings.Split(growthRate, "+")[1]
 				growthInt, _ = strconv.Atoi(growthRate)
 			}
+		}
+	}
+
+	match, _ = regexp.MatchString("You attack.*with your.*and hit for.*damage", line)
+	if match {
+		match, _ = regexp.MatchString("critically hit", line)
+		if !match {
+			damage := strings.Split(line, "and hit for ")[1]
+			damage = strings.Split(damage, " damage")[0]
+			damage = strings.Split(damage, " ")[0]
+			damageInt, _ := strconv.Atoi(damage)
+
+			user := strings.Split(line, "You attack ")[1]
+			user = strings.Split(user, " with your")[0]
+			userStats := _daocLogs.findEnemyStats(user)
+			userStats.MovingDamageReceived = append(userStats.MovingDamageReceived, damageInt)
+
+			weaponName = strings.Split(line, "with your ")[1]
+			weaponName = strings.Split(weaponName, " and hit")[0]
+
+			styleStats := _daocLogs.findStyleStats("base")
+			styleStats.Output = append(styleStats.Output, damageInt)
+
+			weaponStats := styleStats.findWeaponStats(weaponName)
+			weaponStats.Output = append(weaponStats.Output, damageInt)
 		}
 	}
 
@@ -298,6 +365,16 @@ func (_daocLogs *DaocLogs) regexOffensive(line string, style bool) {
 			styleStats.Crit = append(styleStats.Crit, damageInt)
 			userStats := styleStats.findUserStats(userHit)
 			userStats.MovingDamageReceived = append(userStats.MovingDamageReceived, damageInt)
+		}
+
+		if weaponName != "" {
+			if styleName == "" {
+				styleName = "base"
+			}
+
+			styleStats := _daocLogs.findStyleStats(styleName)
+			weaponStats := styleStats.findWeaponStats(weaponName)
+			weaponStats.Crit = append(weaponStats.Crit, damageInt)
 		}
 		userHit = "unknown"
 	}
@@ -527,6 +604,7 @@ func (_daocLogs *DaocLogs) regexEnemy(line string) {
 			styleStats := _daocLogs.findStyleStats(styleName)
 			styleStats.Parried += 1
 		}
+		styleName = ""
 	}
 	match, _ = regexp.MatchString("evades your attack", line)
 	if match {
@@ -538,6 +616,7 @@ func (_daocLogs *DaocLogs) regexEnemy(line string) {
 			styleStats := _daocLogs.findStyleStats(styleName)
 			styleStats.Evaded += 1
 		}
+		styleName = ""
 	}
 	match, _ = regexp.MatchString("blocks your attack", line)
 	if match {
@@ -549,6 +628,7 @@ func (_daocLogs *DaocLogs) regexEnemy(line string) {
 			styleStats := _daocLogs.findStyleStats(styleName)
 			styleStats.Blocked += 1
 		}
+		styleName = ""
 	}
 
 	match, _ = regexp.MatchString("resists the effect", line)
