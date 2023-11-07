@@ -582,14 +582,6 @@ func (_daocLogs *DaocLogs) regexMisc(line string) {
 		userStats := _daocLogs.findEnemyStats(user)
 		userStats.TotalDeaths += 1
 	}
-	match, _ = regexp.MatchString(" dies", line)
-	if match {
-		_daocLogs.getUser().TotalKills += 1
-		user := strings.Split(line, "] ")[1]
-		user = strings.Split(user, " dies")[0]
-		userStats := _daocLogs.findEnemyStats(user)
-		userStats.TotalDeaths += 1
-	}
 	match, _ = regexp.MatchString("You have died", line)
 	if match {
 		_daocLogs.getUser().TotalDeaths += 1
