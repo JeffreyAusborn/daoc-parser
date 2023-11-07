@@ -237,7 +237,7 @@ func (_daocLogs *DaocLogs) regexOffensive(line string, style bool) {
 			user = strings.Split(user, " for")[0]
 		}
 
-		spellStats := _daocLogs.findDotsNPetsStats(spellName)
+		spellStats := _daocLogs.findSpellStats(spellName)
 		spellStats.Output = append(spellStats.Output, damageInt)
 
 		match, _ = regexp.MatchString("critically hits", line)
