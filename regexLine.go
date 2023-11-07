@@ -61,9 +61,10 @@ func (_daocLogs *DaocLogs) regexOffensive(line string, style bool) {
 	if match {
 		spellName = strings.Split(line, "casting a ")[1]
 		spellName = strings.Split(spellName, " spell")[0]
-		match, _ = regexp.MatchString("a Call ", spellName)
+		match, _ = regexp.MatchString("You begin casting a Call.*spell", line)
 		if match {
-			spellName = strings.Split(spellName, "a Call ")[1]
+			spellName = strings.Split(line, "a Call ")[1]
+			spellName = strings.Split(spellName, " spell")[0]
 		}
 		styleName = ""
 		_daocLogs.findSpellStats(spellName)
