@@ -26,20 +26,34 @@ var (
 	mu       sync.Mutex
 )
 
-func readChatFile(r fyne.URIReadCloser, err error) {
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-	fmt.Println(r.URI())
-}
-
-func openLogFile(logPath string) {
-	f, err := os.OpenFile(logPath, os.O_RDONLY|os.O_EXCL, 0666)
+func openLogFile() {
+	f, err := os.OpenFile(FILE_NAME, os.O_RDONLY|os.O_EXCL, 0666)
 	defer f.Close()
 	if err == nil {
 		iterateLogFile(f)
 	}
+}
+
+func watchFile() error {
+	initialStat, err := os.Stat(FILE_NAME)
+	if err != nil {
+		return err
+	}
+
+	for {
+		stat, err := os.Stat(FILE_NAME)
+		if err != nil {
+			return err
+		}
+
+		if stat.Size() != initialStat.Size() || stat.ModTime() != initialStat.ModTime() {
+			break
+		}
+
+		time.Sleep(1 * time.Second)
+	}
+
+	return nil
 }
 
 var (
@@ -83,7 +97,7 @@ func main() {
 	daocLogs = DaocLogs{}
 	myApp := app.New()
 	myWindow := myApp.NewWindow("Dark Age of Camelot - Chat Parser - Theorist")
-	openLogFile(FILE_NAME)
+	openLogFile()
 	spellLogs, _ := renderSpells(myWindow)
 	killLog, _ := renderKills(myWindow)
 	damageArmorLogs, _ := renderArmorDamage(myWindow)
@@ -94,10 +108,13 @@ func main() {
 
 	go func() {
 		for range time.Tick(time.Second * LOG_STREAM_TIME) {
-			mu.Lock()
-			daocLogs = DaocLogs{}
-			openLogFile(FILE_NAME)
-			mu.Unlock()
+			err := watchFile()
+			if err == nil {
+				mu.Lock()
+				daocLogs = DaocLogs{}
+				openLogFile()
+				mu.Unlock()
+			}
 		}
 	}()
 
@@ -111,13 +128,6 @@ func main() {
 		container.NewTabItem("Kills", killLog),
 	)
 	tabs.SetTabLocation(container.TabLocationTop)
-
-	// resetbtn := widget.NewButton("Reset", func() {
-	// 	e := os.Remove(FILE_NAME)
-	// 	if e != nil {
-	// 		fmt.Println(e)
-	// 	}
-	// })
 
 	myWindow.SetContent(tabs)
 

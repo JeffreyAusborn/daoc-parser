@@ -74,6 +74,7 @@ type Stats struct {
 	ParryTotal            int
 	EvadeTotal            int
 	OverHeals             int
+	Interrupted           int
 
 	StartTime time.Time // First occurance of chat log opened
 	EndTime   time.Time // Last known occurance of chat log closed
@@ -152,15 +153,15 @@ func (_daocLogs *DaocLogs) findDotsNPetsStats(ability string) *Ability {
 	return &newAbility
 }
 
-func (_spell *Ability) findUserStats(user string) *Stats {
-	user = strings.TrimSpace(strings.ToLower(user))
-	for _, enemy := range _spell.Users {
-		if enemy.UserName == user {
-			return enemy
+func (_spell *Ability) findUserStats(userName string) *Stats {
+	userName = strings.TrimSpace(strings.ToLower(userName))
+	for _, user := range _spell.Users {
+		if user.UserName == userName {
+			return user
 		}
 	}
 	newUser := Stats{}
-	newUser.UserName = user
+	newUser.UserName = userName
 	_spell.Users = append(_spell.Users, &newUser)
 	return &newUser
 }
@@ -180,7 +181,7 @@ func (_daocLogs *DaocLogs) findStyleStats(ability string) *Ability {
 
 func (_daocLogs *DaocLogs) findHealStats(ability string) *Ability {
 	ability = strings.TrimSpace(strings.ToLower(ability))
-	for _, stats := range _daocLogs.User.Heals {
+	for _, stats := range _daocLogs.getUser().Heals {
 		if stats.Name == ability {
 			return stats
 		}

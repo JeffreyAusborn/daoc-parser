@@ -66,6 +66,15 @@ func (_daocLogs *DaocLogs) regexOffensive(line string, style bool) {
 		return
 	}
 
+	match, _ = regexp.MatchString("You cast a.*spell", line)
+	if match {
+		spellName = strings.Split(line, "cast a ")[1]
+		spellName = strings.Split(spellName, " spell")[0]
+		styleName = ""
+		_daocLogs.findSpellStats(spellName)
+		return
+	}
+
 	match, _ = regexp.MatchString("You prepare to perform a.*", line)
 	if match {
 		styleName = strings.Split(line, "perform a ")[1]
@@ -81,11 +90,14 @@ func (_daocLogs *DaocLogs) regexOffensive(line string, style bool) {
 		if match {
 			healExist := _daocLogs.healAbilityExist(spellName)
 			if healExist {
-				spellStats := _daocLogs.findHealStats(spellName)
-				spellStats.Interupts = append(spellStats.Interupts, "self")
+				healStats := _daocLogs.findHealStats(spellName)
+				userStats := healStats.findUserStats("yourself")
+				userStats.Interrupted += 1
 			} else {
 				spellStats := _daocLogs.findSpellStats(spellName)
 				spellStats.Interupts = append(spellStats.Interupts, "self")
+				userStats := spellStats.findUserStats("yourself")
+				userStats.Interrupted += 1
 			}
 			spellName = ""
 			return
@@ -98,11 +110,13 @@ func (_daocLogs *DaocLogs) regexOffensive(line string, style bool) {
 
 			healExist := _daocLogs.healAbilityExist(spellName)
 			if healExist {
-				spellStats := _daocLogs.findHealStats(spellName)
-				spellStats.Interupts = append(spellStats.Interupts, user)
+				healStats := _daocLogs.findHealStats(spellName)
+				userStats := healStats.findUserStats(user)
+				userStats.Interrupted += 1
 			} else {
 				spellStats := _daocLogs.findSpellStats(spellName)
-				spellStats.Interupts = append(spellStats.Interupts, user)
+				userStats := spellStats.findUserStats(user)
+				userStats.Interrupted += 1
 			}
 			spellName = ""
 			return
@@ -397,10 +411,28 @@ func (_daocLogs *DaocLogs) regexSupport(line string) {
 			healStats := _daocLogs.findHealStats(styleName)
 			healStats.Output = append(healStats.Output, healingInt)
 
-			userStats := healStats.findUserStats("self")
+			userStats := healStats.findUserStats("yourself")
 			userStats.TotalHeals = append(userStats.TotalHeals, healingInt)
 			styleName = ""
 			return
+		}
+		match, _ = regexp.MatchString("You heal.*for.*hit points", line)
+		if match {
+			healing := strings.Split(line, "for ")[1]
+			healing = strings.Split(healing, " hit points")[0]
+			healingInt, _ := strconv.Atoi(healing)
+			_daocLogs.getUser().TotalHeals = append(_daocLogs.getUser().TotalHeals, healingInt)
+
+			user := strings.Split(line, " for")[0]
+			user = strings.Split(user, "heal ")[1]
+
+			healStats := _daocLogs.findHealStats(styleName)
+			healStats.Output = append(healStats.Output, healingInt)
+
+			userStats := healStats.findUserStats(user)
+			userStats.TotalHeals = append(userStats.TotalHeals, healingInt)
+			return
+
 		}
 	}
 
@@ -416,7 +448,7 @@ func (_daocLogs *DaocLogs) regexSupport(line string) {
 		healStats := _daocLogs.findHealStats("unknown")
 		healStats.Output = append(healStats.Output, healingInt)
 
-		userStats := healStats.findUserStats("self")
+		userStats := healStats.findUserStats("yourself")
 		userStats.TotalHeals = append(userStats.TotalHeals, healingInt)
 		styleName = ""
 		return
