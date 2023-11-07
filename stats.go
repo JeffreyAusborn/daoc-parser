@@ -288,16 +288,23 @@ func (_daocLogs *DaocLogs) calculateSpells() []string {
 			totalInterupts += len(ability.Interupts)
 		}
 
-		listItems = append(listItems, fmt.Sprintf("Total Hits: %d", totalHits))
+		listItems = append(listItems, fmt.Sprintf("Total Casts: %d", totalHits))
 		listItems = append(listItems, fmt.Sprintf("Total Damage: %d\n", totalDamage))
 		listItems = append(listItems, fmt.Sprintf("Total Crit: %d\n", totalCrit))
 		listItems = append(listItems, fmt.Sprintf("Total Interupts Received: %d\n", totalInterupts))
 
 		for _, ability := range _daocLogs.getUser().Spells {
 			listItems = append(listItems, fmt.Sprintf("\t----- %s -----", ability.Name))
-			listItems = append(listItems, fmt.Sprintf("Hits: %d", len(ability.Output)))
-			listItems = append(listItems, fmt.Sprintf("Damage: %d\n", sumArr(ability.Output)))
-			listItems = append(listItems, fmt.Sprintf("Crit: %d\n", sumArr(ability.Crit)))
+			listItems = append(listItems, fmt.Sprintf("Casts: %d", len(ability.Output)))
+			if sumArr(ability.Output) > 0 {
+				listItems = append(listItems, fmt.Sprintf("Damage: %d\n", sumArr(ability.Output)))
+			}
+			if sumArr(ability.Crit) > 0 {
+				listItems = append(listItems, fmt.Sprintf("Crit: %d\n", sumArr(ability.Crit)))
+			}
+			if ability.Stunned > 0 {
+				listItems = append(listItems, fmt.Sprintf("Stunned: %d\n", ability.Stunned))
+			}
 			userRupt := make(map[string]int)
 			for _, user := range ability.Interupts {
 				userRupt[user] += 1
@@ -334,11 +341,24 @@ func (_daocLogs *DaocLogs) calculateStyles() []string {
 			listItems = append(listItems, fmt.Sprintf("\t----- %s -----", ability.Name))
 			listItems = append(listItems, fmt.Sprintf("Hits: %d", len(ability.Output)))
 			listItems = append(listItems, fmt.Sprintf("Damage: %d\n", sumArr(ability.Output)))
-			listItems = append(listItems, fmt.Sprintf("Extra Damage: %d\n", sumArr(ability.ExtraDamage)))
-			listItems = append(listItems, fmt.Sprintf("Crit: %d\n", sumArr(ability.Crit)))
-			listItems = append(listItems, fmt.Sprintf("Blocked: %d", ability.Blocked))
-			listItems = append(listItems, fmt.Sprintf("Evaded: %d\n", ability.Evaded))
-			listItems = append(listItems, fmt.Sprintf("Parried: %d\n", ability.Parried))
+			if sumArr(ability.ExtraDamage) > 0 {
+				listItems = append(listItems, fmt.Sprintf("Extra Damage: %d\n", sumArr(ability.ExtraDamage)))
+			}
+			if sumArr(ability.Crit) > 0 {
+				listItems = append(listItems, fmt.Sprintf("Crit: %d\n", sumArr(ability.Crit)))
+			}
+			if ability.Stunned > 0 {
+				listItems = append(listItems, fmt.Sprintf("Stunned: %d\n", ability.Stunned))
+			}
+			if ability.Blocked > 0 {
+				listItems = append(listItems, fmt.Sprintf("Blocked: %d", ability.Blocked))
+			}
+			if ability.Evaded > 0 {
+				listItems = append(listItems, fmt.Sprintf("Evaded: %d\n", ability.Evaded))
+			}
+			if ability.Parried > 0 {
+				listItems = append(listItems, fmt.Sprintf("Parried: %d\n", ability.Parried))
+			}
 			if len(ability.GrowthRate) > 0 {
 				minG, maxG := getMinAndMax(ability.GrowthRate)
 				listItems = append(listItems, fmt.Sprintf("Growth Rate Min: %d\n", minG))

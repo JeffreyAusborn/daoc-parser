@@ -93,6 +93,7 @@ type Ability struct {
 	Interupts   []string
 	Users       []*Stats
 
+	Stunned   int
 	Resists   int
 	Blocked   int
 	Parried   int

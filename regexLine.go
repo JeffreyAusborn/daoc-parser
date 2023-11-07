@@ -427,6 +427,15 @@ func (_daocLogs *DaocLogs) regexSupport(line string) {
 		_daocLogs.getUser().TotalStuns += 1
 		user := strings.Split(line, " is ")[0]
 		user = strings.Split(user, "] ")[1]
+
+		if spellName != "" {
+			spellStats := _daocLogs.findSpellStats(spellName)
+			spellStats.Stunned += 1
+		} else if styleName != "" {
+			styleStats := _daocLogs.findStyleStats(styleName)
+			styleStats.Stunned += 1
+		}
+
 		userStats := _daocLogs.findEnemyStats(user)
 		userStats.TotalStuns += 1
 	}
