@@ -129,6 +129,12 @@ func (_daocLogs *DaocLogs) findEnemyStats(user string) *Stats {
 
 func (_daocLogs *DaocLogs) findSpellStats(ability string) *Ability {
 	ability = strings.TrimSpace(strings.ToLower(ability))
+	if strings.Contains(ability, "call ") {
+		ability = strings.Split(ability, "call ")[1]
+	}
+	if strings.Contains(ability, "summon ") {
+		ability = strings.Split(ability, "summon ")[1]
+	}
 	for _, stats := range _daocLogs.User.Spells {
 		if stats.Name == ability {
 			return stats

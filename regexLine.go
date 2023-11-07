@@ -558,9 +558,6 @@ func (_daocLogs *DaocLogs) regexEnemy(line string) {
 		userStats := _daocLogs.findEnemyStats(user)
 		userStats.ResistsInTotal += 1
 
-		// spellName = strings.Split(line, "resists your ")[1]
-		// spellName = strings.Split(spellName, " effect")[0]
-
 		if spellName != "" {
 			spellStats := _daocLogs.findSpellStats(spellName)
 			spellStats.Resists += 1
@@ -575,6 +572,7 @@ func (_daocLogs *DaocLogs) regexEnemy(line string) {
 
 		tempSpellName := strings.Split(line, "resists your ")[1]
 		tempSpellName = strings.Split(tempSpellName, " effect")[0]
+		tempSpellName = strings.Split(tempSpellName, "'")[0]
 		spellStats := _daocLogs.findSpellStats(tempSpellName)
 		spellStats.Resists += 1
 		userStats := spellStats.findUserStats(user)
