@@ -250,6 +250,8 @@ func (_daocLogs *DaocLogs) calculateSpells() []string {
 					if user.Interrupted > 0 {
 						listItems = append(listItems, fmt.Sprintf("%s interrupted you %d times", user.UserName, user.Interrupted))
 					}
+				}
+				for _, user := range ability.Users {
 					if sumArr(user.MovingDamageReceived) > 0 {
 						listItems = append(listItems, fmt.Sprintf("You hit %s for: %d", user.UserName, sumArr(user.MovingDamageReceived)))
 					}
