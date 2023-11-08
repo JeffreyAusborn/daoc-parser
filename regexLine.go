@@ -455,8 +455,8 @@ func (_daocLogs *DaocLogs) regexSupport(line string) {
 			healing := strings.Split(line, "for an extra ")[1]
 			healing = strings.Split(healing, " amount")[0]
 			healingInt, _ := strconv.Atoi(healing)
-			_daocLogs.getUser().TotalHealsCrits = append(_daocLogs.getUser().TotalHealsCrits, healingInt)
-			_daocLogs.getUser().TotalHeals = append(_daocLogs.getUser().TotalHeals, healingInt)
+			// _daocLogs.getUser().TotalHealsCrits = append(_daocLogs.getUser().TotalHealsCrits, healingInt)
+			// _daocLogs.getUser().TotalHeals = append(_daocLogs.getUser().TotalHeals, healingInt)
 
 			user := strings.Split(line, " for")[0]
 			user = strings.Split(user, "heal ")[1]
@@ -477,8 +477,8 @@ func (_daocLogs *DaocLogs) regexSupport(line string) {
 			healing = strings.Split(healing, " hit points")[0]
 			healingInt, _ := strconv.Atoi(healing)
 
-			_daocLogs.getUser().TotalSelfHeal = append(_daocLogs.getUser().TotalSelfHeal, healingInt)
-			_daocLogs.getUser().TotalHeals = append(_daocLogs.getUser().TotalHeals, healingInt)
+			// _daocLogs.getUser().TotalSelfHeal = append(_daocLogs.getUser().TotalSelfHeal, healingInt)
+			// _daocLogs.getUser().TotalHeals = append(_daocLogs.getUser().TotalHeals, healingInt)
 
 			healStats := _daocLogs.findHealStats(styleName)
 			healStats.Output = append(healStats.Output, healingInt)
@@ -514,8 +514,8 @@ func (_daocLogs *DaocLogs) regexSupport(line string) {
 		healing = strings.Split(healing, " hit points")[0]
 		healingInt, _ := strconv.Atoi(healing)
 
-		_daocLogs.getUser().TotalSelfHeal = append(_daocLogs.getUser().TotalSelfHeal, healingInt)
-		_daocLogs.getUser().TotalHeals = append(_daocLogs.getUser().TotalHeals, healingInt)
+		// _daocLogs.getUser().TotalSelfHeal = append(_daocLogs.getUser().TotalSelfHeal, healingInt)
+		// _daocLogs.getUser().TotalHeals = append(_daocLogs.getUser().TotalHeals, healingInt)
 
 		healStats := _daocLogs.findHealStats("unknown")
 		healStats.Output = append(healStats.Output, healingInt)
@@ -695,22 +695,22 @@ func (_daocLogs *DaocLogs) regexEnemy(line string) {
 			switch armorPiece {
 			case "head":
 				userStats.ArmorHit.Head = append(userStats.ArmorHit.Head, damageInt)
-				userStats.MovingDamageStyles = append(userStats.MovingDamageStyles, damageInt)
+				// userStats.MovingDamageStyles = append(userStats.MovingDamageStyles, damageInt)
 			case "torso":
 				userStats.ArmorHit.Torso = append(userStats.ArmorHit.Torso, damageInt)
-				userStats.MovingDamageStyles = append(userStats.MovingDamageStyles, damageInt)
+				// userStats.MovingDamageStyles = append(userStats.MovingDamageStyles, damageInt)
 			case "leg":
 				userStats.ArmorHit.Leg = append(userStats.ArmorHit.Leg, damageInt)
-				userStats.MovingDamageStyles = append(userStats.MovingDamageStyles, damageInt)
+				// userStats.MovingDamageStyles = append(userStats.MovingDamageStyles, damageInt)
 			case "arm":
 				userStats.ArmorHit.Arm = append(userStats.ArmorHit.Arm, damageInt)
-				userStats.MovingDamageStyles = append(userStats.MovingDamageStyles, damageInt)
+				// userStats.MovingDamageStyles = append(userStats.MovingDamageStyles, damageInt)
 			case "hand":
 				userStats.ArmorHit.Hand = append(userStats.ArmorHit.Hand, damageInt)
-				userStats.MovingDamageStyles = append(userStats.MovingDamageStyles, damageInt)
+				// userStats.MovingDamageStyles = append(userStats.MovingDamageStyles, damageInt)
 			case "foot":
 				userStats.ArmorHit.Foot = append(userStats.ArmorHit.Foot, damageInt)
-				userStats.MovingDamageStyles = append(userStats.MovingDamageStyles, damageInt)
+				// userStats.MovingDamageStyles = append(userStats.MovingDamageStyles, damageInt)
 			default:
 				break
 			}

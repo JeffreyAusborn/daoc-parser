@@ -30,18 +30,18 @@ func (_daocLogs *DaocLogs) calculateDamageIn() []string {
 func (_daocLogs *DaocLogs) calculateHeal() []string {
 	listItems := []string{}
 	if len(_daocLogs.getUser().Heals) > 0 {
-		totalHeals := 0
+		totalHeals := []int{}
 		totalCrit := 0
 		for _, ability := range _daocLogs.getUser().Heals {
-			totalHeals += sumArr(ability.Output)
+			totalHeals = append(totalHeals, ability.Output...)
 			totalCrit += sumArr(ability.Crit)
 		}
 		listItems = append(listItems, "\t----- Total Heals -----\n")
 		min, max := 0, 0
-		if totalHeals > 0 {
-			min, max = getMinAndMax(_daocLogs.getUser().TotalHeals)
+		if len(totalHeals) > 0 {
+			min, max = getMinAndMax(totalHeals)
 		}
-		listItems = append(listItems, fmt.Sprintf("Total Heals: %d\n", totalHeals))
+		listItems = append(listItems, fmt.Sprintf("Total Heals: %d\n", sumArr(totalHeals)))
 		listItems = append(listItems, fmt.Sprintf("Total Crit Heals: %d\n", totalCrit))
 		listItems = append(listItems, fmt.Sprintf("Minimum Heal: %d\n", min))
 		listItems = append(listItems, fmt.Sprintf("Maximum Heal: %d\n", max))

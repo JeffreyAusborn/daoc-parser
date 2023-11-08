@@ -34,19 +34,11 @@ type ArmorHit struct {
 */
 
 type Stats struct {
-	UserName              string
-	ArmorHit              ArmorHit
-	MovingDamageTotal     []int // all damage
-	MovingDamageBaseMelee []int // melee hit without using a style
-	MovingDamageStyles    []int // melee hit with a style
-	MovingDamageSpells    []int // spells hit - this includes weapon/armor procs, style procs
-	MovingExtraDamage     []int // extra damage (damage add)
-	MovingCritDamage      []int // crit damage
-	MovingDamageReceived  []int // damage receieved - more so for the enemy player
-
-	UsersHit    []string // who you hit
-	UsersHealed []string // who you healed
-	UsersKilled []string // who you killed
+	UserName             string
+	ArmorHit             ArmorHit
+	MovingDamageTotal    []int // all damage
+	MovingCritDamage     []int // crit damage
+	MovingDamageReceived []int // damage receieved - more so for the enemy player
 
 	TotalKills  int // how many kills - pve and pvp
 	TotalDeaths int // how many times you've died - pve and pvp
@@ -58,23 +50,17 @@ type Stats struct {
 
 	ExperienceGained []int // experience gain
 
-	TotalSelfHeal   []int // self healing
-	TotalHeals      []int // healing all
-	TotalHealsCrits []int // healing crits
-	TotalAbsorbed   []int // how many absorbs a player has had
+	TotalHeals    []int // healing all
+	TotalAbsorbed []int // how many absorbs a player has had
 
-	TotalStuns            int
-	SpellsPerformed       int
-	CastedSpellsPerformed int
-	ResistsOutTotal       int
-	ResistsInTotal        int
-	MissesTotal           int
-	SiphonTotal           int
-	BlockTotal            int
-	ParryTotal            int
-	EvadeTotal            int
-	OverHeals             int
-	Interrupted           int
+	TotalStuns      int
+	ResistsOutTotal int
+	ResistsInTotal  int
+	MissesTotal     int
+	BlockTotal      int
+	ParryTotal      int
+	EvadeTotal      int
+	Interrupted     int
 
 	StartTime time.Time // First occurance of chat log opened
 	EndTime   time.Time // Last known occurance of chat log closed
