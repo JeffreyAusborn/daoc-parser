@@ -75,6 +75,15 @@ func (_daocLogs *DaocLogs) regexOffensive(line string, style bool) {
 		return
 	}
 
+	match, _ = regexp.MatchString("You fire a.*!", line)
+	if match {
+		spellName = strings.Split(line, "fire a ")[1]
+		spellName = strings.Split(spellName, "!")[0]
+		styleName = ""
+		_daocLogs.findSpellStats(spellName)
+		return
+	}
+
 	match, _ = regexp.MatchString("You cast a.*spell", line)
 	if match {
 		spellName = strings.Split(line, "cast a ")[1]
