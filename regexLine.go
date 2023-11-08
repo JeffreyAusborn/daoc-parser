@@ -325,7 +325,6 @@ func (_daocLogs *DaocLogs) regexOffensive(line string, style bool) {
 		match, _ = regexp.MatchString("attacks", line)
 		matchShoot, _ := regexp.MatchString("Your.*shoots.*for.*damage", line)
 		if match {
-		if match {
 			spellName = strings.Split(spellName, " attacks")[0]
 			user = strings.Split(line, "attacks ")[1]
 			user = strings.Split(user, " and")[0]
