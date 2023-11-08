@@ -60,6 +60,7 @@ type Stats struct {
 	BlockTotal      int
 	ParryTotal      int
 	EvadeTotal      int
+	BladeturnTotal  int
 	Interrupted     int
 
 	StartTime time.Time // First occurance of chat log opened

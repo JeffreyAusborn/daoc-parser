@@ -388,14 +388,22 @@ func (_daocLogs *DaocLogs) regexDefensives(line string) {
 	match, _ = regexp.MatchString("you block", line)
 	if match {
 		_daocLogs.getUser().BlockTotal += 1
+		return
+	}
+	match, _ = regexp.MatchString("absorbed by a magical barrier", line)
+	if match {
+		_daocLogs.getUser().BladeturnTotal += 1
+		return
 	}
 	match, _ = regexp.MatchString("you evade", line)
 	if match {
 		_daocLogs.getUser().EvadeTotal += 1
+		return
 	}
 	match, _ = regexp.MatchString("you parry", line)
 	if match {
 		_daocLogs.getUser().ParryTotal += 1
+		return
 	}
 	match, _ = regexp.MatchString("Your ablative absorbs", line)
 	if match {
@@ -403,10 +411,12 @@ func (_daocLogs *DaocLogs) regexDefensives(line string) {
 		absorb = strings.Split(absorb, " damage")[0]
 		absorbInt, _ := strconv.Atoi(absorb)
 		_daocLogs.getUser().TotalAbsorbed = append(_daocLogs.getUser().TotalAbsorbed, absorbInt)
+		return
 	}
 	match, _ = regexp.MatchString("You resist the effect", line)
 	if match {
 		_daocLogs.getUser().ResistsInTotal += 1
+		return
 	}
 }
 

@@ -79,23 +79,23 @@ func (_daocLogs *DaocLogs) calculateHeal() []string {
 
 func (_daocLogs *DaocLogs) calculateDensives() []string {
 	listItems := []string{}
-	if _daocLogs.User.BlockTotal+_daocLogs.User.ParryTotal+_daocLogs.User.EvadeTotal+_daocLogs.User.TotalStuns+_daocLogs.User.ResistsInTotal > 0 {
-		listItems = append(listItems, "\t\t----- Defensives -----\n")
-		if _daocLogs.User.BlockTotal > 0 {
-			listItems = append(listItems, fmt.Sprintf("Block: %d\n", _daocLogs.User.BlockTotal))
-		}
-		if _daocLogs.User.ParryTotal > 0 {
-			listItems = append(listItems, fmt.Sprintf("Parry: %d\n", _daocLogs.User.ParryTotal))
-		}
-		if _daocLogs.User.EvadeTotal > 0 {
-			listItems = append(listItems, fmt.Sprintf("Evade: %d\n", _daocLogs.User.EvadeTotal))
-		}
-		if _daocLogs.User.TotalStuns > 0 {
-			listItems = append(listItems, fmt.Sprintf("Stuns: %d\n", _daocLogs.User.TotalStuns))
-		}
-		if _daocLogs.User.TotalStuns > 0 {
-			listItems = append(listItems, fmt.Sprintf("You Resisted: %d\n", _daocLogs.User.ResistsInTotal))
-		}
+	if _daocLogs.getUser().BlockTotal > 0 {
+		listItems = append(listItems, fmt.Sprintf("Block: %d\n", _daocLogs.getUser().BlockTotal))
+	}
+	if _daocLogs.getUser().ParryTotal > 0 {
+		listItems = append(listItems, fmt.Sprintf("Parry: %d\n", _daocLogs.getUser().ParryTotal))
+	}
+	if _daocLogs.getUser().EvadeTotal > 0 {
+		listItems = append(listItems, fmt.Sprintf("Evade: %d\n", _daocLogs.getUser().EvadeTotal))
+	}
+	if _daocLogs.getUser().TotalStuns > 0 {
+		listItems = append(listItems, fmt.Sprintf("Stuns: %d\n", _daocLogs.getUser().TotalStuns))
+	}
+	if _daocLogs.getUser().TotalStuns > 0 {
+		listItems = append(listItems, fmt.Sprintf("You Resisted: %d\n", _daocLogs.getUser().ResistsInTotal))
+	}
+	if _daocLogs.getUser().BladeturnTotal > 0 {
+		listItems = append(listItems, fmt.Sprintf("Bladeturn: %d\n", _daocLogs.getUser().BladeturnTotal))
 	}
 	return listItems
 }
@@ -125,8 +125,8 @@ func (_daocLogs *DaocLogs) getCombativeUsers() []string {
 
 func (_daocLogs *DaocLogs) calculateTime() []string {
 	listItems := []string{}
-	totalMinutes := int(_daocLogs.User.EndTime.Sub(_daocLogs.User.StartTime).Seconds()) / 60
-	totalSeconds := int(_daocLogs.User.EndTime.Sub(_daocLogs.User.StartTime).Seconds()) - (60 * totalMinutes)
+	totalMinutes := int(_daocLogs.getUser().EndTime.Sub(_daocLogs.getUser().StartTime).Seconds()) / 60
+	totalSeconds := int(_daocLogs.getUser().EndTime.Sub(_daocLogs.getUser().StartTime).Seconds()) - (60 * totalMinutes)
 	listItems = append(listItems, "\t\t----- Total Time -----")
 	listItems = append(listItems, fmt.Sprintf("%d minutes and %d seconds", totalMinutes, totalSeconds))
 	return listItems
