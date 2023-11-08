@@ -724,8 +724,8 @@ func (_daocLogs *DaocLogs) regexEnemy(line string) {
 
 			userStats.MovingDamageTotal = append(userStats.MovingDamageTotal, damageInt)
 
-			armorPiece := strings.Split(line, " for")[0]
-			armorPiece = strings.Split(armorPiece, "your ")[1]
+			armorPiece := strings.Split(line, " for ")[0]
+			armorPiece = strings.Split(armorPiece, " your ")[1]
 
 			switch armorPiece {
 			case "head":
