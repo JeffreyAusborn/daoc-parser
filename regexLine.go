@@ -298,6 +298,7 @@ func (_daocLogs *DaocLogs) regexOffensive(line string, style bool) {
 
 			weaponStats := styleStats.findWeaponStats(weaponName)
 			weaponStats.Output = append(weaponStats.Output, damageInt)
+			return
 		}
 	}
 
@@ -326,8 +327,8 @@ func (_daocLogs *DaocLogs) regexOffensive(line string, style bool) {
 		matchShoot, _ := regexp.MatchString("Your.*shoots.*for.*damage", line)
 		if match {
 			spellName = strings.Split(spellName, " attacks")[0]
-			user = strings.Split(line, "attacks ")[1]
-			user = strings.Split(user, " and")[0]
+			user = strings.Split(line, " attacks ")[1]
+			user = strings.Split(user, " and hit")[0]
 		} else if matchShoot {
 			spellName = strings.Split(spellName, " shoots")[0]
 			user = strings.Split(line, " and hits")[0]
@@ -341,12 +342,16 @@ func (_daocLogs *DaocLogs) regexOffensive(line string, style bool) {
 		spellStats := _daocLogs.findSpellStats(spellName)
 		spellStats.Output = append(spellStats.Output, damageInt)
 
-		match, _ = regexp.MatchString("critically hits", line)
+		userStats := spellStats.findUserStats(user)
+		userStats.MovingDamageReceived = append(userStats.MovingDamageReceived, damageInt)
+
+		// match, _ = regexp.MatchString("critically hits", line)
 		// Zombie servant crit doesn't have user name - will need to keep an eye on this for other pet crits
-		if !match {
-			userStats := _daocLogs.findEnemyStats(user)
-			userStats.MovingDamageReceived = append(userStats.MovingDamageReceived, damageInt)
-		}
+		// if !match {
+		// 	userStats := _daocLogs.findEnemyStats(user)
+		// 	userStats.MovingDamageReceived = append(userStats.MovingDamageReceived, damageInt)
+		// }
+		return
 	}
 
 	match, _ = regexp.MatchString("You critically hit", line)
