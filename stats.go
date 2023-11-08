@@ -102,23 +102,16 @@ func (_daocLogs *DaocLogs) calculateDensives() []string {
 
 func (_daocLogs *DaocLogs) getCombativeUsers() []string {
 	users := []string{}
-	totalAllDamage := []int{}
-
-	for _, user := range _daocLogs.Enemy {
-		totalAllDamage = append(totalAllDamage, user.MovingDamageTotal...)
-	}
-	users = append(users, "\t\t----- Damage In -----")
-	users = append(users, fmt.Sprintf("Total Damage: %d\n", sumArr(totalAllDamage)))
-	users = append(users, fmt.Sprintf("Total Hits: %d", len(totalAllDamage)))
-	users = append(users, "\t\t----- Combatives -----")
-	for _, user := range _daocLogs.Enemy {
-		users = append(users, "\t----- "+user.UserName+" -----")
-		users = append(users, fmt.Sprintf("Damage In: %d", sumArr(user.MovingDamageReceived)))
-		users = append(users, fmt.Sprintf("Damage Out: %d", sumArr(user.MovingDamageTotal)))
-		users = append(users, fmt.Sprintf("Blocks: %d", user.BlockTotal))
-		users = append(users, fmt.Sprintf("Evades: %d", user.EvadeTotal))
-		users = append(users, fmt.Sprintf("Parry: %d", user.ParryTotal))
-		users = append(users, fmt.Sprintf("Resisted You: %d", user.ResistsInTotal))
+	if len(_daocLogs.Enemy) > 0 {
+		for _, user := range _daocLogs.Enemy {
+			users = append(users, "\t----- "+user.UserName+" -----")
+			users = append(users, fmt.Sprintf("Damage In: %d", sumArr(user.MovingDamageReceived)))
+			users = append(users, fmt.Sprintf("Damage Out: %d", sumArr(user.MovingDamageTotal)))
+			users = append(users, fmt.Sprintf("Blocks: %d", user.BlockTotal))
+			users = append(users, fmt.Sprintf("Evades: %d", user.EvadeTotal))
+			users = append(users, fmt.Sprintf("Parry: %d", user.ParryTotal))
+			users = append(users, fmt.Sprintf("Resisted You: %d", user.ResistsInTotal))
+		}
 	}
 	return users
 }
