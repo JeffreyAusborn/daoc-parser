@@ -698,8 +698,9 @@ func (_daocLogs *DaocLogs) regexEnemy(line string) {
 		user = strings.Split(user, "] ")[1]
 
 		tempSpellName := strings.Split(line, "resists your ")[1]
-		tempSpellName = strings.Split(tempSpellName, " effect")[0]
-		tempSpellName = strings.Split(tempSpellName, "'")[0]
+		tempSpellName = strings.Split(tempSpellName, "'s effect")[0]
+
+		// tempSpellName = strings.Split(tempSpellName, "'")[0]
 		spellStats := _daocLogs.findSpellStats(tempSpellName)
 		spellStats.Resists += 1
 		userStats := spellStats.findUserStats(user)
