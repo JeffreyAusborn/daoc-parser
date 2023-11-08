@@ -465,6 +465,17 @@ func (_daocLogs *DaocLogs) regexSupport(line string) {
 			userStats := healStats.findUserStats(user)
 			userStats.TotalHeals = append(userStats.TotalHeals, healingInt)
 		}
+		match, _ = regexp.MatchString("You steal.*hit points", line)
+		if match {
+			heal := strings.Split(line, "You steal ")[1]
+			heal = strings.Split(heal, " hit points")[0]
+			healInt, _ := strconv.Atoi(heal)
+
+			healStats := _daocLogs.findHealStats(spellName)
+			healStats.Output = append(healStats.Output, healInt)
+			playerStats := healStats.findUserStats("yourself")
+			playerStats.TotalHeals = append(playerStats.TotalHeals, healInt)
+		}
 	}
 
 	// TODO
@@ -500,6 +511,17 @@ func (_daocLogs *DaocLogs) regexSupport(line string) {
 			userStats.TotalHeals = append(userStats.TotalHeals, healingInt)
 			return
 
+		}
+		match, _ = regexp.MatchString("You steal.*hit points", line)
+		if match {
+			heal := strings.Split(line, "You steal ")[1]
+			heal = strings.Split(heal, " hit points")[0]
+			healInt, _ := strconv.Atoi(heal)
+
+			healStats := _daocLogs.findHealStats(styleName)
+			healStats.Output = append(healStats.Output, healInt)
+			playerStats := healStats.findUserStats("yourself")
+			playerStats.TotalHeals = append(playerStats.TotalHeals, healInt)
 		}
 	}
 
