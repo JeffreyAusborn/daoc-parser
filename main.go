@@ -3,7 +3,9 @@ package main
 import (
 	"bufio"
 	"fmt"
+	"io/fs"
 	"os"
+	"strings"
 	"sync"
 	"time"
 
@@ -22,8 +24,9 @@ const (
 )
 
 var (
-	daocLogs DaocLogs
-	mu       sync.Mutex
+	daocLogs    DaocLogs
+	mu          sync.Mutex
+	initialStat fs.FileInfo
 )
 
 func openLogFile() {
@@ -37,6 +40,23 @@ func openLogFile() {
 var (
 	tempLines []string
 )
+
+func checkFileChangedInit() {
+	initialStat, _ = os.Stat(FILE_NAME)
+}
+func checkFileChanged() bool {
+	stat, err := os.Stat(FILE_NAME)
+	if err != nil {
+		if strings.Contains(err.Error(), "no such file or directory") {
+			return true
+		}
+		return false
+	}
+	if stat.Size() != initialStat.Size() || stat.ModTime() != initialStat.ModTime() {
+		return true
+	}
+	return false
+}
 
 func iterateLogFile(f *os.File) {
 	reader := bufio.NewReader(f)
@@ -61,6 +81,7 @@ func main() {
 	daocLogs = DaocLogs{}
 	myApp := app.New()
 	myWindow := myApp.NewWindow("Dark Age of Camelot - Chat Parser - Theorist")
+	checkFileChangedInit()
 	openLogFile()
 	spellLogs, _ := renderSpells(myWindow)
 	killLog, _ := renderKills(myWindow)
@@ -72,10 +93,12 @@ func main() {
 
 	go func() {
 		for range time.Tick(time.Second * LOG_STREAM_TIME) {
-			mu.Lock()
-			daocLogs = DaocLogs{}
-			openLogFile()
-			mu.Unlock()
+			if checkFileChanged() {
+				mu.Lock()
+				daocLogs = DaocLogs{}
+				openLogFile()
+				mu.Unlock()
+			}
 		}
 	}()
 
