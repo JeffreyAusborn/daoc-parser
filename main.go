@@ -52,6 +52,9 @@ func checkFileChanged() bool {
 		}
 		return false
 	}
+	if initialStat == nil {
+		initialStat = stat
+	}
 	if stat.Size() != initialStat.Size() || stat.ModTime() != initialStat.ModTime() {
 		return true
 	}

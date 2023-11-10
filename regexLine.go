@@ -37,6 +37,7 @@ var (
 	styleName  string
 	weaponName string
 	spellName  string
+
 	userHit    string
 	growthInt  int
 	spellStats Ability
@@ -801,24 +802,31 @@ func (_daocLogs *DaocLogs) regexEnemy(line string) {
 			case "head":
 				userStats.ArmorHit.Head = append(userStats.ArmorHit.Head, damageInt)
 				// userStats.MovingDamageStyles = append(userStats.MovingDamageStyles, damageInt)
+				spellName = "head proc"
 			case "torso":
 				userStats.ArmorHit.Torso = append(userStats.ArmorHit.Torso, damageInt)
 				// userStats.MovingDamageStyles = append(userStats.MovingDamageStyles, damageInt)
+				spellName = "torso proc"
 			case "leg":
 				userStats.ArmorHit.Leg = append(userStats.ArmorHit.Leg, damageInt)
 				// userStats.MovingDamageStyles = append(userStats.MovingDamageStyles, damageInt)
+				spellName = "leg proc"
 			case "arm":
 				userStats.ArmorHit.Arm = append(userStats.ArmorHit.Arm, damageInt)
 				// userStats.MovingDamageStyles = append(userStats.MovingDamageStyles, damageInt)
+				spellName = "arm proc"
 			case "hand":
 				userStats.ArmorHit.Hand = append(userStats.ArmorHit.Hand, damageInt)
 				// userStats.MovingDamageStyles = append(userStats.MovingDamageStyles, damageInt)
+				spellName = "hand proc"
 			case "foot":
 				userStats.ArmorHit.Foot = append(userStats.ArmorHit.Foot, damageInt)
 				// userStats.MovingDamageStyles = append(userStats.MovingDamageStyles, damageInt)
+				spellName = "foot proc"
 			default:
 				break
 			}
+			styleName = ""
 		}
 	}
 	match, _ = regexp.MatchString("critically hits you for", line)
