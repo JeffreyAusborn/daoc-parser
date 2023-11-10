@@ -9,9 +9,9 @@ func sumArr(arr []int) int {
 }
 
 func dedupe(usersHit []string) []string {
-	temp := make(map[string]int)
+	temp := make(map[string]bool)
 	for _, user := range usersHit {
-		temp[user] = 1
+		temp[user] = true
 	}
 
 	tempKeys := []string{}

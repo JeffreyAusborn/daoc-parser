@@ -82,13 +82,14 @@ type Ability struct {
 	Users       []*Stats
 	Weapons     []*Ability
 
-	Stunned   int
-	Resists   int
-	Blocked   int
-	Parried   int
-	Evaded    int
-	Siphon    int
-	OverHeals int
+	Stunned    int
+	Resists    int
+	Blocked    int
+	Parried    int
+	Evaded     int
+	Siphon     int
+	OverHeals  int
+	TotalCount int
 }
 
 type Weapon struct {

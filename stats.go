@@ -243,15 +243,15 @@ func (_daocLogs *DaocLogs) calculateSpells() []string {
 	listItems := []string{}
 	if len(_daocLogs.getUser().Spells) > 0 {
 		totalHits := 0
-		totalDamage := 0
-		totalCrit := 0
+		totalDamage := []int{}
+		totalCrit := []int{}
 		totalInterupts := 0
 		totalSiphons := 0
 		totalResists := 0
 		for _, ability := range _daocLogs.getUser().Spells {
 			totalHits += len(ability.Output)
-			totalDamage += sumArr(ability.Output)
-			totalCrit += sumArr(ability.Crit)
+			totalDamage = append(totalDamage, ability.Output...)
+			totalCrit = append(totalCrit, ability.Crit...)
 			totalSiphons += ability.Siphon
 			for _, user := range ability.Users {
 				totalInterupts += user.Interrupted
@@ -262,8 +262,20 @@ func (_daocLogs *DaocLogs) calculateSpells() []string {
 		}
 
 		listItems = append(listItems, fmt.Sprintf("Total Hits: %d", totalHits))
-		listItems = append(listItems, fmt.Sprintf("Total Damage: %d\n", totalDamage))
-		listItems = append(listItems, fmt.Sprintf("Total Crit: %d\n", totalCrit))
+		listItems = append(listItems, fmt.Sprintf("Total Damage: %d\n", sumArr(totalDamage)))
+		if len(totalDamage) > 0 {
+			minC, maxC := getMinAndMax(totalDamage)
+			listItems = append(listItems, fmt.Sprintf("Min Damage: %d\n", minC))
+			listItems = append(listItems, fmt.Sprintf("Max Damage: %d\n", maxC))
+			listItems = append(listItems, fmt.Sprintf("Average Damage: %d\n", sumArr(totalDamage)/len(totalDamage)))
+		}
+		listItems = append(listItems, fmt.Sprintf("Total Crit: %d\n", sumArr(totalCrit)))
+		if len(totalCrit) > 0 {
+			minC, maxC := getMinAndMax(totalCrit)
+			listItems = append(listItems, fmt.Sprintf("Min Crit: %d\n", minC))
+			listItems = append(listItems, fmt.Sprintf("Max Crit: %d\n", maxC))
+			listItems = append(listItems, fmt.Sprintf("Average Crit: %d\n", sumArr(totalCrit)/len(totalCrit)))
+		}
 		listItems = append(listItems, fmt.Sprintf("Total Siphons: %d\n", totalSiphons))
 		listItems = append(listItems, fmt.Sprintf("Total Interupts Received: %d\n", totalInterupts))
 		listItems = append(listItems, fmt.Sprintf("Total Resists: %d\n", totalResists))
@@ -282,9 +294,17 @@ func (_daocLogs *DaocLogs) calculateSpells() []string {
 				}
 				if sumArr(ability.Output) > 0 {
 					listItems = append(listItems, fmt.Sprintf("Damage: %d\n", sumArr(ability.Output)))
+					minC, maxC := getMinAndMax(ability.Output)
+					listItems = append(listItems, fmt.Sprintf("Min Damage: %d\n", minC))
+					listItems = append(listItems, fmt.Sprintf("Max Damage: %d\n", maxC))
+					listItems = append(listItems, fmt.Sprintf("Average Damage: %d\n", sumArr(ability.Output)/len(ability.Output)))
 				}
 				if sumArr(ability.Crit) > 0 {
 					listItems = append(listItems, fmt.Sprintf("Crit: %d\n", sumArr(ability.Crit)))
+					minC, maxC := getMinAndMax(ability.Crit)
+					listItems = append(listItems, fmt.Sprintf("Min Crit: %d\n", minC))
+					listItems = append(listItems, fmt.Sprintf("Max Crit: %d\n", maxC))
+					listItems = append(listItems, fmt.Sprintf("Average Crit: %d\n", sumArr(ability.Crit)/len(ability.Crit)))
 				}
 				if totalResists > 0 {
 					listItems = append(listItems, fmt.Sprintf("Resists: %d\n", totalResists))
