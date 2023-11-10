@@ -1,4 +1,4 @@
-module parser
+module chatgator
 
 go 1.19
 
