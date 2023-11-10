@@ -6,8 +6,8 @@ Parsing Dark Age of Camelot chat.log file in order to provide user and enemy bas
     - Install GO
         - https://go.dev/doc/install
     - ```go build```
-    - copy parser.exe to the folder where chat.log exists
-    - ```./parser```
+    - copy chatgator to the folder where chat.log exists
+    - ```./chatgator```
 - For windows
     - Install GO
         - https://go.dev/doc/install
@@ -17,8 +17,10 @@ Parsing Dark Age of Camelot chat.log file in order to provide user and enemy bas
         - ```go env -w CGO_ENABLED=1```
     - Build
     - ```go build```
-    - copy parser.exe to the folder where chat.log exists
-    - ```./parser.exe```
+    - copy chatgator.exe to the folder where chat.log exists
+    - run the executable
+    - ```./chatgator.exe```
+    - you can run as admin on the executbale itself, youll see two windows pop up
 
 # TODO Features
 - Create more regex stats
@@ -43,3 +45,5 @@ Parsing Dark Age of Camelot chat.log file in order to provide user and enemy bas
     - Convert the window to an overlay?
 - Log enable / disable
     - Enable and disable logs for the user in order to flush the log buffer
+
+- Refactor the UI and the app itself - electrode maybe
