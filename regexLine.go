@@ -373,6 +373,19 @@ func (_daocLogs *DaocLogs) regexOffensive(line string, style bool) {
 			styleStats.Crit = append(styleStats.Crit, damageInt)
 			userStats := styleStats.findUserStats(userHit)
 			userStats.MovingDamageReceived = append(userStats.MovingDamageReceived, damageInt)
+		} else {
+			if len(_daocLogs.getUser().Spells) > len(_daocLogs.getUser().Spells) {
+				spellStats := _daocLogs.findSpellStats("unknown")
+				spellStats.Crit = append(spellStats.Crit, damageInt)
+				userStats := spellStats.findUserStats(userHit)
+				userStats.MovingDamageReceived = append(userStats.MovingDamageReceived, damageInt)
+			} else {
+				styleStats := _daocLogs.findStyleStats("unknown")
+				styleStats.Crit = append(styleStats.Crit, damageInt)
+				userStats := styleStats.findUserStats(userHit)
+				userStats.MovingDamageReceived = append(userStats.MovingDamageReceived, damageInt)
+			}
+
 		}
 
 		if weaponName != "" {
@@ -496,6 +509,41 @@ func (_daocLogs *DaocLogs) regexSupport(line string) {
 		}
 	}
 
+	match, _ = regexp.MatchString("Your.*is healed by.*for.*hit points", line)
+	if match {
+		healing := strings.Split(line, "for ")[1]
+		healing = strings.Split(healing, " hit points")[0]
+		healingInt, _ := strconv.Atoi(healing)
+
+		petName := strings.Split(line, "Your ")[1]
+		petName = strings.Split(petName, " is healed")[0]
+
+		user := strings.Split(line, " for ")[0]
+		user = strings.Split(user, "healed by ")[1]
+
+		healStats := _daocLogs.findHealStats(user)
+		healStats.Output = append(healStats.Output, healingInt)
+		userStats := healStats.findUserStats(petName)
+		userStats.TotalHeals = append(userStats.TotalHeals, healingInt)
+		return
+	}
+
+	match, _ = regexp.MatchString("You are healed by.*for.*hit points", line)
+	if match {
+		healing := strings.Split(line, "for ")[1]
+		healing = strings.Split(healing, " hit points")[0]
+		healingInt, _ := strconv.Atoi(healing)
+
+		user := strings.Split(line, " for ")[0]
+		user = strings.Split(user, "healed by ")[1]
+
+		healStats := _daocLogs.findHealStats(user)
+		healStats.Output = append(healStats.Output, healingInt)
+		userStats := healStats.findUserStats("you")
+		userStats.TotalHeals = append(userStats.TotalHeals, healingInt)
+		return
+	}
+
 	// TODO
 	if styleName != "" {
 		match, _ = regexp.MatchString("You heal yourself for", line)
@@ -564,13 +612,13 @@ func (_daocLogs *DaocLogs) regexSupport(line string) {
 		user := strings.Split(line, " is ")[0]
 		user = strings.Split(user, "] ")[1]
 
-		if spellName != "" {
-			spellStats := _daocLogs.findSpellStats(spellName)
-			spellStats.Stunned += 1
-		} else if styleName != "" {
-			styleStats := _daocLogs.findStyleStats(styleName)
-			styleStats.Stunned += 1
-		}
+		// if spellName != "" {
+		// 	spellStats := _daocLogs.findSpellStats(spellName)
+		// 	spellStats.Stunned += 1
+		// } else if styleName != "" {
+		// 	styleStats := _daocLogs.findStyleStats(styleName)
+		// 	styleStats.Stunned += 1
+		// }
 
 		userStats := _daocLogs.findEnemyStats(user)
 		userStats.TotalStuns += 1
@@ -685,16 +733,19 @@ func (_daocLogs *DaocLogs) regexEnemy(line string) {
 
 	match, _ = regexp.MatchString("resists the effect", line)
 	if match {
-		user := strings.Split(line, " resists")[0]
-		user = strings.Split(user, "] ")[1]
-		userStats := _daocLogs.findEnemyStats(user)
-		userStats.ResistsInTotal += 1
+		match, _ = regexp.MatchString("Your.*resists the effect", line)
+		if !match {
+			user := strings.Split(line, " resists")[0]
+			user = strings.Split(user, "] ")[1]
+			userStats := _daocLogs.findEnemyStats(user)
+			userStats.ResistsInTotal += 1
 
-		if spellName != "" {
-			spellStats := _daocLogs.findSpellStats(spellName)
-			spellStats.Resists += 1
+			if spellName != "" {
+				spellStats := _daocLogs.findSpellStats(spellName)
+				spellStats.Resists += 1
+			}
+			return
 		}
-		return
 	}
 	// pets?
 	match, _ = regexp.MatchString("resists your.*effect", line)
@@ -770,7 +821,7 @@ func (_daocLogs *DaocLogs) regexEnemy(line string) {
 			}
 		}
 	}
-	match, _ = regexp.MatchString("critically hits you", line)
+	match, _ = regexp.MatchString("critically hits you for", line)
 	if match {
 		damage := strings.Split(line, "for an additional ")[1]
 		damage = strings.Split(damage, " damage")[0]

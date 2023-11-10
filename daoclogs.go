@@ -43,11 +43,11 @@ type Stats struct {
 	TotalKills  int // how many kills - pve and pvp
 	TotalDeaths int // how many times you've died - pve and pvp
 
-	Spells    []*Ability // This will only work if the ability with damage exist, like it does for dots and pets
-	DotsNPets []*Ability // This will only work if the ability with damage exist, like it does for dots and pets
-	Heals     []*Ability
-	Styles    []*Ability
-
+	Spells           []*Ability // This will only work if the ability with damage exist, like it does for dots and pets
+	DotsNPets        []*Ability // This will only work if the ability with damage exist, like it does for dots and pets
+	Heals            []*Ability
+	Styles           []*Ability
+	HealedByUser     []*Stats
 	ExperienceGained []int // experience gain
 
 	TotalHeals    []int // healing all
@@ -162,6 +162,19 @@ func (_spell *Ability) findUserStats(userName string) *Stats {
 	newUser := Stats{}
 	newUser.UserName = userName
 	_spell.Users = append(_spell.Users, &newUser)
+	return &newUser
+}
+
+func (_daocLogs *DaocLogs) findUserStats(userName string) *Stats {
+	userName = strings.TrimSpace(strings.ToLower(userName))
+	for _, user := range _daocLogs.getUser().HealedByUser {
+		if user.UserName == userName {
+			return user
+		}
+	}
+	newUser := Stats{}
+	newUser.UserName = userName
+	_daocLogs.getUser().HealedByUser = append(_daocLogs.getUser().HealedByUser, &newUser)
 	return &newUser
 }
 

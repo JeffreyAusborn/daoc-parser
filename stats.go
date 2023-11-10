@@ -104,13 +104,40 @@ func (_daocLogs *DaocLogs) getCombativeUsers() []string {
 	users := []string{}
 	if len(_daocLogs.Enemy) > 0 {
 		for _, user := range _daocLogs.Enemy {
+			userDamaged := 0
 			users = append(users, "\t----- "+user.UserName+" -----")
-			users = append(users, fmt.Sprintf("Damage In: %d", sumArr(user.MovingDamageReceived)))
-			users = append(users, fmt.Sprintf("Damage Out: %d", sumArr(user.MovingDamageTotal)))
-			users = append(users, fmt.Sprintf("Blocks: %d", user.BlockTotal))
-			users = append(users, fmt.Sprintf("Evades: %d", user.EvadeTotal))
-			users = append(users, fmt.Sprintf("Parry: %d", user.ParryTotal))
-			users = append(users, fmt.Sprintf("Resisted You: %d", user.ResistsInTotal))
+			for _, ability := range _daocLogs.getUser().Spells {
+				for _, userHit := range ability.Users {
+					if userHit.UserName == user.UserName {
+						userDamaged += sumArr(userHit.MovingDamageReceived)
+					}
+				}
+			}
+			for _, ability := range _daocLogs.getUser().Styles {
+				for _, userHit := range ability.Users {
+					if userHit.UserName == user.UserName {
+						userDamaged += sumArr(userHit.MovingDamageReceived)
+					}
+				}
+			}
+			if userDamaged > 0 {
+				users = append(users, fmt.Sprintf("Damage Received: %d", userDamaged))
+			}
+			if sumArr(user.MovingDamageTotal) > 0 {
+				users = append(users, fmt.Sprintf("Damaged You: %d", sumArr(user.MovingDamageTotal)))
+			}
+			if user.BlockTotal > 0 {
+				users = append(users, fmt.Sprintf("Blocks You: %d", user.BlockTotal))
+			}
+			if user.EvadeTotal > 0 {
+				users = append(users, fmt.Sprintf("Evades You: %d", user.EvadeTotal))
+			}
+			if user.ParryTotal > 0 {
+				users = append(users, fmt.Sprintf("Parry You: %d", user.ParryTotal))
+			}
+			if user.ResistsInTotal > 0 {
+				users = append(users, fmt.Sprintf("Resisted You: %d", user.ResistsInTotal))
+			}
 		}
 	}
 	return users
@@ -152,30 +179,59 @@ func (_daocLogs *DaocLogs) calculateArmorhits() []string {
 		foot = append(foot, user.ArmorHit.Foot...)
 	}
 	if len(head)+len(torso)+len(arm)+len(leg)+len(hand)+len(foot) > 0 {
-		listItems = append(listItems, "\t\t----- Armor Damaged -----")
 		if len(head) > 0 {
-			listItems = append(listItems, fmt.Sprintf("Head Hit: %d", len(head)))
-			listItems = append(listItems, fmt.Sprintf("Head Damage: %d", sumArr(head)))
+			listItems = append(listItems, "\t\t----- Head Damaged -----")
+			listItems = append(listItems, fmt.Sprintf("Hits: %d", len(head)))
+			listItems = append(listItems, fmt.Sprintf("Damage: %d", sumArr(head)))
+			min, max := getMinAndMax(head)
+			listItems = append(listItems, fmt.Sprintf("Min Damage: %d", min))
+			listItems = append(listItems, fmt.Sprintf("Max Damage: %d", max))
+			listItems = append(listItems, fmt.Sprintf("Avg Damage: %d", sumArr(head)/len(head)))
 		}
 		if len(torso) > 0 {
-			listItems = append(listItems, fmt.Sprintf("Torso Hit: %d", len(torso)))
-			listItems = append(listItems, fmt.Sprintf("Torso Damage: %d", sumArr(torso)))
+			listItems = append(listItems, "\t\t----- Torso Damaged -----")
+			listItems = append(listItems, fmt.Sprintf("Hits: %d", len(torso)))
+			listItems = append(listItems, fmt.Sprintf("Damage: %d", sumArr(torso)))
+			min, max := getMinAndMax(torso)
+			listItems = append(listItems, fmt.Sprintf("Min Damage: %d", min))
+			listItems = append(listItems, fmt.Sprintf("Max Damage: %d", max))
+			listItems = append(listItems, fmt.Sprintf("Avg Damage: %d", sumArr(torso)/len(torso)))
 		}
 		if len(arm) > 0 {
-			listItems = append(listItems, fmt.Sprintf("Arm Hit: %d", len(arm)))
-			listItems = append(listItems, fmt.Sprintf("Arm Damage: %d", sumArr(arm)))
+			listItems = append(listItems, "\t\t----- Arm Damaged -----")
+			listItems = append(listItems, fmt.Sprintf("Hits: %d", len(arm)))
+			listItems = append(listItems, fmt.Sprintf("Damage: %d", sumArr(arm)))
+			min, max := getMinAndMax(arm)
+			listItems = append(listItems, fmt.Sprintf("Min Damage: %d", min))
+			listItems = append(listItems, fmt.Sprintf("Max Damage: %d", max))
+			listItems = append(listItems, fmt.Sprintf("Avg Damage: %d", sumArr(arm)/len(arm)))
 		}
 		if len(leg) > 0 {
-			listItems = append(listItems, fmt.Sprintf("Leg Hit: %d", len(leg)))
-			listItems = append(listItems, fmt.Sprintf("Leg Damage: %d", sumArr(leg)))
+			listItems = append(listItems, "\t\t----- Leg Damaged -----")
+			listItems = append(listItems, fmt.Sprintf("Hits: %d", len(leg)))
+			listItems = append(listItems, fmt.Sprintf("Damage: %d", sumArr(leg)))
+			min, max := getMinAndMax(leg)
+			listItems = append(listItems, fmt.Sprintf("Min Damage: %d", min))
+			listItems = append(listItems, fmt.Sprintf("Max Damage: %d", max))
+			listItems = append(listItems, fmt.Sprintf("Avg Damage: %d", sumArr(leg)/len(leg)))
 		}
 		if len(hand) > 0 {
-			listItems = append(listItems, fmt.Sprintf("Hand Hit: %d", len(hand)))
-			listItems = append(listItems, fmt.Sprintf("Hand Damage: %d", sumArr(hand)))
+			listItems = append(listItems, "\t\t----- Hand Damaged -----")
+			listItems = append(listItems, fmt.Sprintf("Hits: %d", len(hand)))
+			listItems = append(listItems, fmt.Sprintf("Damage: %d", sumArr(hand)))
+			min, max := getMinAndMax(hand)
+			listItems = append(listItems, fmt.Sprintf("Min Damage: %d", min))
+			listItems = append(listItems, fmt.Sprintf("Max Damage: %d", max))
+			listItems = append(listItems, fmt.Sprintf("Avg Damage: %d", sumArr(hand)/len(hand)))
 		}
 		if len(foot) > 0 {
-			listItems = append(listItems, fmt.Sprintf("Foot Hit: %d", len(foot)))
-			listItems = append(listItems, fmt.Sprintf("Foot Damage: %d", sumArr(foot)))
+			listItems = append(listItems, "\t\t----- Foot Damaged -----")
+			listItems = append(listItems, fmt.Sprintf("Hits: %d", len(foot)))
+			listItems = append(listItems, fmt.Sprintf("Damage: %d", sumArr(foot)))
+			min, max := getMinAndMax(foot)
+			listItems = append(listItems, fmt.Sprintf("Min Damage: %d", min))
+			listItems = append(listItems, fmt.Sprintf("Max Damage: %d", max))
+			listItems = append(listItems, fmt.Sprintf("Avg Damage: %d", sumArr(foot)/len(foot)))
 		}
 	}
 	return listItems
